@@ -10,12 +10,12 @@ const createLog = async (req, res) => {
 };
 
 const getLogs = async (req, res) => {
-  try {
-    const logs = await logService.getLogs();
-    res.json(logs);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    try {
+      const result = await logService.getLogs(req.query);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 module.exports = { createLog, getLogs };
