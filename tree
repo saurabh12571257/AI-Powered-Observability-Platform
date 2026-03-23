@@ -2239,12 +2239,16 @@
 │       ├── app.js
 │       ├── config
 │       ├── controllers
+│       │   └── logController.js
 │       ├── middlewares
 │       ├── models
+│       │   └── logModel.js
 │       ├── routes
+│       │   └── logRoutes.js
 │       ├── server.js
 │       ├── services
+│       │   └── logService.js
 │       └── utils
 └── tree
 
-326 directories, 1922 files
+326 directories, 1926 files
