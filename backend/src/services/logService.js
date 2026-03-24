@@ -1,55 +1,81 @@
+const esClient = require("../config/elasticsearch");
 const Log = require("../models/logModel");
 
 const createLog = async (data) => {
-  return await Log.create(data);
-};
-
-const getLogs = async (query) => {
-  const filter = {};
-
-  // 🔹 Filtering
-  if (query.level) {
-    filter.level = query.level;
-  }
-
-  if (query.service) {
-    filter.service = query.service;
-  }
-
-  if (query.search) {
-    filter.$text = { $search: query.search };
-  }
-
-  // 📄 Pagination
-  const page = parseInt(query.page) || 1;
-  const limit = parseInt(query.limit) || 5;
-
-  const skip = (page - 1) * limit;
-
-  let logs;
-
-if (query.search) {
-  logs = await Log.find(filter, {
-    score: { $meta: "textScore" },
-  })
-    .sort({ score: { $meta: "textScore" } })
-    .skip(skip)
-    .limit(limit);
-} else {
-  logs = await Log.find(filter)
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
-}
-
-  const total = await Log.countDocuments(filter);
-
-  return {
-    total,
-    page,
-    pages: Math.ceil(total / limit),
-    logs,
+    const log = await Log.create(data);
+  
+    await esClient.index({
+      index: "logs",
+      document: data,
+    });
+  
+    return log;
   };
-};
 
-module.exports = { createLog, getLogs };
+  const getLogs = async (query) => {
+    const must = [];
+  
+    // 🔹 Filtering
+    if (query.level) {
+      must.push({ match: { level: query.level } });
+    }
+  
+    if (query.service) {
+      must.push({ match: { service: query.service } });
+    }
+  
+    // 🔍 Search
+    if (query.search) {
+      must.push({
+        multi_match: {
+          query: query.search,
+          fields: ["message", "service", "level"],
+        },
+      });
+    }
+  
+    const page = parseInt(query.page) || 1;
+    const limit = parseInt(query.limit) || 5;
+  
+    const from = (page - 1) * limit;
+  
+    const result = await esClient.search({
+      index: "logs",
+      from,
+      size: limit,
+      query: {
+        bool: {
+          must,
+        },
+      },
+    });
+  
+    return {
+      total: result.hits.total.value,
+      logs: result.hits.hits.map((hit) => hit._source),
+    };
+  };
+
+  const getLogStats = async () => {
+    const result = await esClient.search({
+      index: "logs",
+      size: 0,
+      aggs: {
+        levels: {
+          terms: {
+            field: "level.keyword",
+          },
+        },
+      },
+    });
+  
+    const stats = {};
+  
+    result.aggregations.levels.buckets.forEach((bucket) => {
+      stats[bucket.key] = bucket.doc_count;
+    });
+  
+    return stats;
+  };
+
+module.exports = { createLog, getLogs, getLogStats };

@@ -16,6 +16,15 @@ const getLogs = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  };
+};
 
-module.exports = { createLog, getLogs };
+const getStats = async (req, res) => {
+    try {
+      const stats = await logService.getLogStats();
+      res.json(stats);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { createLog, getLogs, getStats };
