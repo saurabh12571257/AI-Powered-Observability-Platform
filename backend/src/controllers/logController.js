@@ -1,4 +1,14 @@
 const logService = require("../services/logService");
+const aiService = require("../services/aiService");
+
+const analyzeLogs = async (req, res) => {
+    try {
+      const insight = await aiService.analyzeLogs();
+      res.json({ insight });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
 
 const createLog = async (req, res) => {
   try {

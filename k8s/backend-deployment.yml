@@ -20,6 +20,6 @@ spec:
             - containerPort: 8000
           env:
             - name: MONGO_URI
-              value: ""
+              value: "mongodb+srv://asaurabhdave_db_user:test1234test@cluster0.q2jxziz.mongodb.net/logsDB?retryWrites=true&w=majority"
             - name: PORT
               value: "8000"

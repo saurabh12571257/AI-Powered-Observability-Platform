@@ -9,5 +9,6 @@ const {
 router.post("/logs", createLog);
 router.get("/logs", getLogs);
 router.get("/stats", getStats);
+router.get("/ai-analysis", analyzeLogs);
 
 module.exports = router;
