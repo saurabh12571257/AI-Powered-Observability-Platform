@@ -37,4 +37,4 @@ const getStats = async (req, res) => {
     }
 };
 
-module.exports = { createLog, getLogs, getStats };
+module.exports = { createLog, getLogs, getStats, analyzeLogs };
