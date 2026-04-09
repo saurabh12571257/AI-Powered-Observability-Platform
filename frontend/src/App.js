@@ -48,7 +48,7 @@ function App() {
               <td>{log.service}</td>
               <td>{log.level}</td>
               <td>{log.message}</td>
-              <td>{new Date(log.createdAt).toLocaleString()}</td>
+              <td>{log.createdAt ? new Date(log.createdAt).toLocaleString() :"N/A"}</td>
             </tr>
           ))}
         </tbody>

@@ -3,10 +3,15 @@ const Log = require("../models/logModel");
 
 const createLog = async (data) => {
     const log = await Log.create(data);
+
+    const { _id, __v, ...rest } = log.toObject();
   
     await esClient.index({
       index: "logs",
-      document: data,
+      document: {
+        ...rest,
+        "@timestamp": new Date(),
+      },
     });
   
     return log;
