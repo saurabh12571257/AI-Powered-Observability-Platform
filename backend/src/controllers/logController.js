@@ -1,6 +1,8 @@
 const logService = require("../services/logService");
 const aiService = require("../services/aiService");
 
+
+
 const analyzeLogs = async (req, res) => {
     try {
       const insight = await aiService.analyzeLogs();
@@ -10,14 +12,18 @@ const analyzeLogs = async (req, res) => {
     }
   };
 
-const createLog = async (req, res) => {
-  try {
-    const log = await logService.createLog(req.body);
-    res.status(201).json(log);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+  const createLog = async (req, res) => {
+    try {
+      const log = await logService.createLog(req.body);
+  
+      const io = req.app.get("io");
+      io.emit("new-log", log);
+  
+      res.status(201).json(log);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 const getLogs = async (req, res) => {
     try {
