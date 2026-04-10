@@ -1,4 +1,4 @@
-export default function StatsBar({ logs }) {
+export default function StatsBar({ logs, alertActive }) {
   const totalLogs = logs.length;
   const errorCount = logs.filter((log) => log.level === "error").length;
   const warningCount = logs.filter((log) => log.level === "warn").length;
@@ -7,14 +7,19 @@ export default function StatsBar({ logs }) {
   const stats = [
     { label: "Total Logs", value: totalLogs.toLocaleString() },
     { label: "Error Rate", value: errorRate, color: "text-red-400" },
-    { label: "Warnings", value: warningCount.toLocaleString(), color: "text-yellow-400" },
+    {
+      label: "Warnings",
+      value: warningCount.toLocaleString(),
+      color: alertActive ? "text-red-300" : "text-yellow-400",
+      cardClassName: alertActive ? "bg-red-500/10 ring-1 ring-inset ring-red-500/40" : "",
+    },
     { label: "Services", value: new Set(logs.map((log) => log.service).filter(Boolean)).size.toLocaleString() },
   ];
 
   return (
     <div className="grid grid-cols-2 border-b border-slate-800 md:grid-cols-4">
       {stats.map((stat) => (
-        <div key={stat.label} className="flex justify-between p-4">
+        <div key={stat.label} className={`flex justify-between p-4 ${stat.cardClassName || ""}`}>
           <span className="text-xs text-slate-500">{stat.label}</span>
           <span className={`text-sm ${stat.color || "text-white"}`}>{stat.value}</span>
         </div>

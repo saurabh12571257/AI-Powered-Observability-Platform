@@ -11,5 +11,6 @@ router.post("/logs", createLog);
 router.get("/logs", getLogs);
 router.get("/logs/stats", getStats);
 router.get("/logs/ai-analysis", analyzeLogs);
+router.post("/logs/ai-analysis", analyzeLogs);
 
 module.exports = router;

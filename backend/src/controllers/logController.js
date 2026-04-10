@@ -5,7 +5,7 @@ const aiService = require("../services/aiService");
 
 const analyzeLogs = async (req, res) => {
     try {
-      const insight = await aiService.analyzeLogs();
+      const insight = await aiService.analyzeLogs(req.body.logs);
       res.json({ insight });
     } catch (err) {
       res.status(500).json({ error: err.message });
