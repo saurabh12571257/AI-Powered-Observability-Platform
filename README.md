@@ -1,5 +1,7 @@
 # 🚀 AI-Powered Observability Platform
 
+![Dashboard Preview](./assets/Dashboard.png)
+
 A distributed, production-ready observability system that ingests, stores, analyzes, and visualizes application logs in real-time — enhanced with AI-driven insights.
 
 ---
