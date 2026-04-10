@@ -188,7 +188,3 @@ The backend deployment reads `OPENAI_API_KEY` and `MONGO_URI` from Kubernetes se
 - NGINX proxies `/api/` and `/socket.io/` traffic to `backend-service`
 - Elasticsearch runs in single-node mode in the provided manifests
 - Kibana is configured to connect to the in-cluster Elasticsearch service
-
-## Resume-Friendly Project Summary
-
-Built a cloud-native log observability platform that ingests application events, indexes them into Elasticsearch, streams them live to a React dashboard, and uses OpenAI to summarize high-severity incidents for faster debugging.
