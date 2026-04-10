@@ -7,5 +7,5 @@ socket.on("connect", () => {
 });
 
 socket.on("new-log", (log) => {
-  console.log("🔥 New log received:", log);
+  console.log("New log received:", log);
 });
