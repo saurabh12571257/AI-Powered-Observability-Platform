@@ -9,7 +9,7 @@ const {
 
 router.post("/logs", createLog);
 router.get("/logs", getLogs);
-router.get("/stats", getStats);
-router.get("/ai-analysis", analyzeLogs);
+router.get("/logs/stats", getStats);
+router.get("/logs/ai-analysis", analyzeLogs);
 
 module.exports = router;

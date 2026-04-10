@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const socket = io("http://localhost:30007");
+const socket = io("/");
 
 function App() {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:30007/api/logs")
+    axios.get("/api/logs")
       .then((res) => {
         setLogs(res.data.logs || []);
       });
@@ -17,7 +17,6 @@ function App() {
   useEffect(() => {
     socket.on("new-log", (log) => {
       console.log("New log:", log);
-
       setLogs((prev) => [log, ...prev]);
     });
 
@@ -26,9 +25,7 @@ function App() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Live Logs Dashboard</h1>
-
-      
+      <h1> Live Logs Dashboard</h1>
 
       <table border="1" cellPadding="10" style={{ width: "100%" }}>
         <thead>
@@ -40,15 +37,23 @@ function App() {
           </tr>
         </thead>
 
-        <tbody >
+        <tbody>
           {logs.map((log, index) => (
-            <tr key={index} style={{
-              color: log.level === "error" ? "red" : "green"
-            }}>
+            <tr
+              key={index}
+              style={{
+                color: log.level === "error" ? "red" : "green",
+                color: log.level === "warn" ? "orange" : "green",
+              }}
+            >
               <td>{log.service}</td>
               <td>{log.level}</td>
               <td>{log.message}</td>
-              <td>{log.createdAt ? new Date(log.createdAt).toLocaleString() :"N/A"}</td>
+              <td>
+                {log.createdAt
+                  ? new Date(log.createdAt).toLocaleString()
+                  : "N/A"}
+              </td>
             </tr>
           ))}
         </tbody>
