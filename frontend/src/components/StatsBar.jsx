@@ -1,0 +1,24 @@
+export default function StatsBar({ logs }) {
+  const totalLogs = logs.length;
+  const errorCount = logs.filter((log) => log.level === "error").length;
+  const warningCount = logs.filter((log) => log.level === "warn").length;
+  const errorRate = totalLogs === 0 ? "0.00%" : `${((errorCount / totalLogs) * 100).toFixed(2)}%`;
+
+  const stats = [
+    { label: "Total Logs", value: totalLogs.toLocaleString() },
+    { label: "Error Rate", value: errorRate, color: "text-red-400" },
+    { label: "Warnings", value: warningCount.toLocaleString(), color: "text-yellow-400" },
+    { label: "Services", value: new Set(logs.map((log) => log.service).filter(Boolean)).size.toLocaleString() },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 border-b border-slate-800 md:grid-cols-4">
+      {stats.map((stat) => (
+        <div key={stat.label} className="flex justify-between p-4">
+          <span className="text-xs text-slate-500">{stat.label}</span>
+          <span className={`text-sm ${stat.color || "text-white"}`}>{stat.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
