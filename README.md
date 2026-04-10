@@ -1,6 +1,7 @@
 # 🚀 AI-Powered Observability Platform
 
-![Dashboard](https://raw.githubusercontent.com/saurabh12571257/repo/main/assets/Dashboard.png)
+<img width="1470" height="837" alt="Screenshot 2026-04-10 at 7 22 07 PM" src="https://github.com/user-attachments/assets/79d09c27-e8bf-472a-b0da-4a80d0b901cd" />
+
 
 A distributed, production-ready observability system that ingests, stores, analyzes, and visualizes application logs in real-time — enhanced with AI-driven insights.
 
