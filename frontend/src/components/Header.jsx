@@ -1,4 +1,14 @@
-export default function Header({ searchTerm, onSearchChange, alertActive, onAlertClick }) {
+export default function Header({ searchTerm, onSearchChange, latestIncident, incidentLoading, onAlertClick }) {
+  const incidentPending = latestIncident?.status === "pending";
+  const incidentCompleted = latestIncident?.status === "completed";
+  const buttonLabel = incidentLoading
+    ? "Checking incidents..."
+    : incidentPending
+    ? "High-Severity Incident Pending"
+    : incidentCompleted
+    ? "Latest Incident Analysis"
+    : "No High-Severity Incident";
+
   return (
     <header className="flex min-h-16 flex-col gap-3 border-b border-slate-800 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-4">
@@ -17,13 +27,14 @@ export default function Header({ searchTerm, onSearchChange, alertActive, onAler
         <button
           type="button"
           onClick={onAlertClick}
+          disabled={!latestIncident}
           className={`rounded px-3 py-2 text-xs font-medium transition ${
-            alertActive
+            latestIncident
               ? "border border-red-400/60 bg-red-500/20 text-red-200 hover:bg-red-500/30"
-              : "border border-slate-800 bg-slate-900 text-yellow-300 hover:bg-slate-800"
+              : "cursor-not-allowed border border-slate-800 bg-slate-900 text-slate-500"
           }`}
         >
-          {alertActive ? "Critical Error Burst" : "Warnings"}
+          {buttonLabel}
         </button>
       </div>
     </header>

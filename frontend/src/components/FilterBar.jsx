@@ -1,13 +1,14 @@
-export default function FilterBar({ activeFilter, onFilterChange }) {
+export default function FilterBar({ activeFilter, filterOptions, onFilterChange }) {
   const filters = [
     { label: "All", value: "all" },
-    { label: "Error", value: "error" },
-    { label: "Warning", value: "warn" },
-    { label: "Info", value: "info" },
+    ...filterOptions.map((value) => ({
+      label: value,
+      value,
+    })),
   ];
 
   return (
-    <div className="flex gap-2 bg-slate-900/40 px-6 py-3">
+    <div className="flex flex-wrap gap-2 bg-slate-900/40 px-6 py-3">
       {filters.map((filter) => (
         <button
           type="button"

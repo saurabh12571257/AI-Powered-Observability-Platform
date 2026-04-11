@@ -11,11 +11,11 @@ export default function Dashboard({
   onSearchChange,
   activeFilter,
   onFilterChange,
-  alertActive,
+  filterOptions,
+  latestIncident,
+  incidentLoading,
+  incidentError,
   analysisPanelOpen,
-  aiAnalysis,
-  analysisLoading,
-  analysisError,
   onAlertClick,
   onCloseAlert,
 }) {
@@ -27,19 +27,23 @@ export default function Dashboard({
         <Header
           searchTerm={searchTerm}
           onSearchChange={onSearchChange}
-          alertActive={alertActive}
+          latestIncident={latestIncident}
+          incidentLoading={incidentLoading}
           onAlertClick={onAlertClick}
         />
-        <StatsBar logs={logs} alertActive={alertActive} />
-        <FilterBar activeFilter={activeFilter} onFilterChange={onFilterChange} />
+        <StatsBar logs={logs} latestIncident={latestIncident} />
+        <FilterBar
+          activeFilter={activeFilter}
+          filterOptions={filterOptions}
+          onFilterChange={onFilterChange}
+        />
         <div className="flex flex-1 flex-col xl:flex-row">
           <LogsView logs={logs} />
           {analysisPanelOpen && (
             <RightPanel
-              alertActive={alertActive}
-              analysis={aiAnalysis}
-              loading={analysisLoading}
-              error={analysisError}
+              incident={latestIncident}
+              loading={incidentLoading}
+              error={incidentError}
               onClose={onCloseAlert}
             />
           )}

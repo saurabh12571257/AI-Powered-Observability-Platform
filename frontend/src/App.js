@@ -5,34 +5,11 @@ import axios from "axios";
 import Dashboard from "./components/Dashboard";
 
 const socket = io("/");
-const ERROR_BURST_SIZE = 5;
-const ERROR_BURST_WINDOW_MS = 4000;
 
-function getLogTimestamp(log) {
-  const value = log.createdAt || log["@timestamp"];
+function getIncidentTimestamp(incident) {
+  const value = incident?.createdAt || incident?.updatedAt;
   const parsed = value ? new Date(value).getTime() : Number.NaN;
   return Number.isNaN(parsed) ? 0 : parsed;
-}
-
-function detectErrorBurst(logs) {
-  const orderedLogs = [...logs].sort((a, b) => getLogTimestamp(a) - getLogTimestamp(b));
-
-  for (let index = 0; index <= orderedLogs.length - ERROR_BURST_SIZE; index += 1) {
-    const candidate = orderedLogs.slice(index, index + ERROR_BURST_SIZE);
-
-    if (candidate.some((log) => log.level !== "error")) {
-      continue;
-    }
-
-    const firstTime = getLogTimestamp(candidate[0]);
-    const lastTime = getLogTimestamp(candidate[candidate.length - 1]);
-
-    if (firstTime && lastTime && lastTime - firstTime <= ERROR_BURST_WINDOW_MS) {
-      return candidate;
-    }
-  }
-
-  return null;
 }
 
 function App() {
@@ -40,11 +17,9 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [analysisPanelOpen, setAnalysisPanelOpen] = useState(false);
-  const [aiAnalysis, setAiAnalysis] = useState("");
-  const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [analysisError, setAnalysisError] = useState("");
-  const [burstSignature, setBurstSignature] = useState("");
-  const [burstLogs, setBurstLogs] = useState([]);
+  const [latestIncident, setLatestIncident] = useState(null);
+  const [incidentLoading, setIncidentLoading] = useState(true);
+  const [incidentError, setIncidentError] = useState("");
 
   useEffect(() => {
     axios.get("/api/logs", {
@@ -58,40 +33,57 @@ function App() {
       .catch((err) => {
         console.error("Error fetching logs:", err);
       });
+
+    axios.get("/api/incidents", {
+      params: {
+        limit: 1,
+      },
+    })
+      .then((res) => {
+        const [incident] = res.data.incidents || [];
+        setLatestIncident(incident || null);
+      })
+      .catch((error) => {
+        console.error("Error fetching incidents:", error);
+        setIncidentError("Could not load the latest incident.");
+      })
+      .finally(() => {
+        setIncidentLoading(false);
+      });
   }, []);
 
   useEffect(() => {
     socket.on("new-log", (log) => {
-      console.log("New log:", log);
-
       setLogs((prev) => [log, ...prev]);
+    });
+
+    socket.on("incident-updated", (incident) => {
+      setLatestIncident((prev) => {
+        if (!prev || prev._id === incident._id) {
+          return incident;
+        }
+
+        return getIncidentTimestamp(incident) >= getIncidentTimestamp(prev) ? incident : prev;
+      });
+
+      setIncidentLoading(false);
+      setIncidentError("");
     });
 
     return () => {
       socket.off("new-log");
+      socket.off("incident-updated");
     };
   }, []);
 
+  const levelOptions = Array.from(new Set(logs.map((log) => log.level).filter(Boolean)))
+    .sort((a, b) => a.localeCompare(b));
+
   useEffect(() => {
-    const detectedBurst = detectErrorBurst(logs);
-
-    if (!detectedBurst) {
-      return;
+    if (activeFilter !== "all" && !levelOptions.includes(activeFilter)) {
+      setActiveFilter("all");
     }
-
-    const signature = detectedBurst
-      .map((log) => `${log.service}-${log.message}-${getLogTimestamp(log)}`)
-      .join("|");
-
-    if (signature === burstSignature) {
-      return;
-    }
-
-    setBurstSignature(signature);
-    setBurstLogs(detectedBurst);
-    setAiAnalysis("");
-    setAnalysisError("");
-  }, [logs, burstSignature]);
+  }, [activeFilter, levelOptions]);
 
   const filteredLogs = logs.filter((log) => {
     const matchesFilter = activeFilter === "all" ? true : log.level === activeFilter;
@@ -106,32 +98,17 @@ function App() {
       return true;
     }
 
-    return [log.message, log.service, log.level]
+    return [log.message, log.service, log.level, log.severity]
       .filter(Boolean)
       .some((value) => value.toLowerCase().includes(query));
   });
 
-  const handleAlertClick = async () => {
-    setAnalysisPanelOpen(true);
-
-    if (burstLogs.length === 0 || aiAnalysis || analysisLoading) {
+  const handleAlertClick = () => {
+    if (!latestIncident) {
       return;
     }
 
-    setAnalysisLoading(true);
-    setAnalysisError("");
-
-    try {
-      const response = await axios.post("/api/logs/ai-analysis", {
-        logs: burstLogs,
-      });
-      setAiAnalysis(response.data.insight || "No AI analysis returned.");
-    } catch (error) {
-      console.error("Error fetching AI analysis:", error);
-      setAnalysisError("Could not fetch AI analysis for this error burst.");
-    } finally {
-      setAnalysisLoading(false);
-    }
+    setAnalysisPanelOpen(true);
   };
 
   const handleCloseAlert = () => {
@@ -145,11 +122,11 @@ function App() {
       onSearchChange={setSearchTerm}
       activeFilter={activeFilter}
       onFilterChange={setActiveFilter}
-      alertActive={burstLogs.length === ERROR_BURST_SIZE}
+      filterOptions={levelOptions}
+      latestIncident={latestIncident}
+      incidentLoading={incidentLoading}
+      incidentError={incidentError}
       analysisPanelOpen={analysisPanelOpen}
-      aiAnalysis={aiAnalysis}
-      analysisLoading={analysisLoading}
-      analysisError={analysisError}
       onAlertClick={handleAlertClick}
       onCloseAlert={handleCloseAlert}
     />

@@ -1,19 +1,23 @@
-export default function StatsBar({ logs, alertActive }) {
+export default function StatsBar({ logs, latestIncident }) {
   const totalLogs = logs.length;
   const errorCount = logs.filter((log) => log.level === "error").length;
-  const warningCount = logs.filter((log) => log.level === "warn").length;
+  const highSeverityCount = logs.filter((log) => log.severity === "high").length;
   const errorRate = totalLogs === 0 ? "0.00%" : `${((errorCount / totalLogs) * 100).toFixed(2)}%`;
 
   const stats = [
     { label: "Total Logs", value: totalLogs.toLocaleString() },
     { label: "Error Rate", value: errorRate, color: "text-red-400" },
     {
-      label: "Warnings",
-      value: warningCount.toLocaleString(),
-      color: alertActive ? "text-red-300" : "text-yellow-400",
-      cardClassName: alertActive ? "bg-red-500/10 ring-1 ring-inset ring-red-500/40" : "",
+      label: "High Severity",
+      value: highSeverityCount.toLocaleString(),
+      color: highSeverityCount > 0 ? "text-red-300" : "text-yellow-400",
+      cardClassName: highSeverityCount > 0 ? "bg-red-500/10 ring-1 ring-inset ring-red-500/40" : "",
     },
-    { label: "Services", value: new Set(logs.map((log) => log.service).filter(Boolean)).size.toLocaleString() },
+    {
+      label: "Latest Incident",
+      value: latestIncident ? latestIncident.status : "none",
+      color: latestIncident?.status === "completed" ? "text-emerald-300" : "text-slate-300",
+    },
   ];
 
   return (

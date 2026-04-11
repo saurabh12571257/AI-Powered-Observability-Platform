@@ -1,8 +1,24 @@
 const esClient = require("../config/elasticsearch");
 const Log = require("../models/logModel");
 
+const normalizeText = (value, fallback = "") => {
+  if (typeof value !== "string") {
+    return fallback;
+  }
+
+  return value.trim().toLowerCase();
+};
+
 const createLog = async (data) => {
-    const log = await Log.create(data);
+    const normalizedData = {
+      ...data,
+      service: typeof data.service === "string" ? data.service.trim() : data.service,
+      level: normalizeText(data.level, "info"),
+      severity: normalizeText(data.severity, "medium"),
+      message: typeof data.message === "string" ? data.message.trim() : data.message,
+    };
+
+    const log = await Log.create(normalizedData);
 
     const { _id, __v, ...rest } = log.toObject();
   
@@ -22,11 +38,15 @@ const createLog = async (data) => {
   
     // 🔹 Filtering
     if (query.level) {
-      must.push({ match: { level: query.level } });
+      must.push({ match: { level: normalizeText(query.level) } });
     }
   
     if (query.service) {
       must.push({ match: { service: query.service } });
+    }
+
+    if (query.severity) {
+      must.push({ match: { severity: normalizeText(query.severity) } });
     }
   
     // 🔍 Search
@@ -34,7 +54,7 @@ const createLog = async (data) => {
       must.push({
         multi_match: {
           query: query.search,
-          fields: ["message", "service", "level"],
+          fields: ["message", "service", "level", "severity"],
         },
       });
     }
@@ -48,6 +68,7 @@ const createLog = async (data) => {
       index: "logs",
       from,
       size: limit,
+      sort: [{ "@timestamp": "desc" }],
       query: {
         bool: {
           must,
@@ -59,6 +80,19 @@ const createLog = async (data) => {
       total: result.hits.total.value,
       logs: result.hits.hits.map((hit) => hit._source),
     };
+  };
+
+  const getLogsInWindow = async ({ start, end }) => {
+    const logs = await Log.find({
+      createdAt: {
+        $gte: start,
+        $lte: end,
+      },
+    })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    return logs;
   };
 
   const getLogStats = async () => {
@@ -83,4 +117,4 @@ const createLog = async (data) => {
     return stats;
   };
 
-module.exports = { createLog, getLogs, getLogStats };
+module.exports = { createLog, getLogs, getLogsInWindow, getLogStats };
