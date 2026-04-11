@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const app = require("./app");
-const connectDB = require("./config/db");
+const { connectDB } = require("./config/db");
 
 const http = require("http");
 const { Server } = require("socket.io");
