@@ -16,19 +16,34 @@ spec:
         - name: backend
           image: saurabhdave59/observability-backend:latest
           imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
           ports:
             - containerPort: 8000
           env:
-           - name: OPENAI_API_KEY
-             valueFrom:
+            - name: OPENAI_API_KEY
+              valueFrom:
                 secretKeyRef:
                   name: backend-secrets
                   key: OPENAI_API_KEY
-
-           - name: MONGO_URI
-             valueFrom:
+            - name: MONGO_URI
+              valueFrom:
                 secretKeyRef:
                   name: backend-secrets
                   key: MONGO_URI
-           - name: PORT
-             value: "8000"  
+            - name: PORT
+              value: "8000"
