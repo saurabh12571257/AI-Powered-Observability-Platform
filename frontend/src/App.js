@@ -104,12 +104,9 @@ function App() {
   });
 
   const handleAlertClick = () => {
-    if (!latestIncident) {
-      return;
-    }
-
     setAnalysisPanelOpen(true);
   };
+
 
   const handleCloseAlert = () => {
     setAnalysisPanelOpen(false);

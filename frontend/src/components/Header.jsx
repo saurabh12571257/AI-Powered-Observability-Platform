@@ -47,7 +47,8 @@ export default function Header({ searchTerm, onSearchChange, latestIncident, inc
         <button
           type="button"
           onClick={onAlertClick}
-          disabled={!incidentActive}
+          disabled={incidentLoading}
+
           className={`group relative flex items-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-xs font-semibold transition-all border ${
             incidentActive
               ? "border-rose-500/30 bg-zinc-900/50 text-rose-500 shadow-lg shadow-rose-500/10 hover:scale-[1.02] active:scale-[0.98] animate-blink-red-fast"

@@ -61,4 +61,17 @@ const getIncidents = async (req, res) => {
     }
 };
 
-module.exports = { createLog, getLogs, getStats, analyzeLogs, getIncidents };
+const chatWithAI = async (req, res) => {
+  try {
+    const { messages } = req.body;
+    // Get latest logs for context
+    const { logs } = await logService.getLogs({ limit: 50 });
+    const reply = await aiService.chatWithLogs(messages, logs);
+    res.json({ reply });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createLog, getLogs, getStats, analyzeLogs, getIncidents, chatWithAI };
+

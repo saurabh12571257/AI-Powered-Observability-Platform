@@ -6,6 +6,7 @@ const {
     getStats,
     analyzeLogs,
     getIncidents,
+    chatWithAI,
   } = require("../controllers/logController");
 
 router.post("/logs", createLog);
@@ -14,5 +15,7 @@ router.get("/logs/stats", getStats);
 router.get("/incidents", getIncidents);
 router.get("/logs/ai-analysis", analyzeLogs);
 router.post("/logs/ai-analysis", analyzeLogs);
+router.post("/logs/chat", chatWithAI);
+
 
 module.exports = router;

@@ -71,4 +71,32 @@ const analyzeIncidentWindow = async ({ logs, triggerLog, windowStart, windowEnd 
   return response.choices[0].message.content;
 };
 
-module.exports = { analyzeLogs, analyzeIncidentWindow };
+const chatWithLogs = async (messages, inputLogs) => {
+  const logs = Array.isArray(inputLogs) && inputLogs.length > 0 ? inputLogs : await getRecentLogs();
+  const logText = formatLogs(logs);
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content: `You are Lumina, the AI assistant for an advanced observability platform. 
+        Your ONLY job is to help users understand their logs and troubleshoot system issues.
+        
+        GUARDRAILS:
+        - If the user asks about anything other than logs, system health, or troubleshooting, say: "I can only assist with log analysis and troubleshooting."
+        - Do not tell jokes, do not provide general code help (unless related to these logs), and do not answer general knowledge questions.
+        - Be concise, technical, and professional.
+        
+        CURRENT LOG CONTEXT:
+        ${logText || "No logs available currently."}`,
+      },
+      ...messages,
+    ],
+  });
+
+  return response.choices[0].message.content;
+};
+
+module.exports = { analyzeLogs, analyzeIncidentWindow, chatWithLogs };
+

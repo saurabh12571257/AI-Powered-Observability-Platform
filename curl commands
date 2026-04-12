@@ -1,0 +1,18 @@
+curl -X POST http://localhost:30007/api/logs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service": "payment-gateway",
+    "level": "error",
+    "severity": "high",
+    "message": "CRITICAL: Database connection pool exhausted - failing all incoming transactions"
+  }'
+
+
+curl -X POST http://localhost:30007/api/logs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service": "payment-gateway",
+    "level": "info",
+    "severity": "low",
+    "message": "RECOVERY: Database connection re-established - connection pool stabilized"
+  }'

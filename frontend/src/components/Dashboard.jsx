@@ -44,16 +44,17 @@ export default function Dashboard({
           onFilterChange={onFilterChange}
         />
         
+        {analysisPanelOpen && (
+          <RightPanel
+            incident={latestIncident}
+            onClose={onCloseAlert}
+          />
+        )}
+        
         <div className="relative flex flex-1 overflow-hidden">
           <LogsView logs={logs} />
-          
-          {analysisPanelOpen && (
-            <RightPanel
-              incident={latestIncident}
-              onClose={onCloseAlert}
-            />
-          )}
         </div>
+
       </main>
     </div>
 
