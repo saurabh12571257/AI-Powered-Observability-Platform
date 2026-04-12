@@ -23,7 +23,10 @@ const analyzeLogs = async (req, res) => {
 
       if (incident) {
         io.emit("incident-updated", incident);
+      } else if (log.severity === "low" || log.level === "info") {
+        await incidentService.resolveIncidentForService(log.service, io);
       }
+
   
       res.status(201).json({ log, incident });
     } catch (error) {

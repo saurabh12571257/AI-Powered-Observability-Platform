@@ -16,7 +16,8 @@ const incidentSchema = new mongoose.Schema(
   {
     triggerLogId: { type: mongoose.Schema.Types.ObjectId, ref: "Log", required: true, index: true },
     triggerLog: { type: incidentLogSchema, required: true },
-    status: { type: String, enum: ["pending", "completed", "failed"], default: "pending", index: true },
+    status: { type: String, enum: ["pending", "completed", "failed", "resolved"], default: "pending", index: true },
+
     service: { type: String, index: true },
     severity: { type: String, index: true },
     windowStart: { type: Date, required: true, index: true },

@@ -128,7 +128,35 @@ const getIncidents = async ({ status, limit = 10 } = {}) => {
   return incidents.map(getIncidentSummary);
 };
 
+const resolveIncidentForService = async (service, io) => {
+  try {
+    const incident = await Incident.findOne({
+      service,
+      status: { $in: ["pending", "completed"] },
+    }).sort({ createdAt: -1 });
+
+    if (!incident) {
+      return null;
+    }
+
+    incident.status = "resolved";
+    incident.updatedAt = new Date();
+    await incident.save();
+
+    if (io) {
+      io.emit("incident-updated", getIncidentSummary(incident));
+    }
+
+    return getIncidentSummary(incident);
+  } catch (error) {
+    console.error("Failed to resolve incident:", error);
+    return null;
+  }
+};
+
 module.exports = {
   createIncidentWindow,
   getIncidents,
+  resolveIncidentForService,
 };
+

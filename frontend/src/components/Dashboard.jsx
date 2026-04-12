@@ -20,10 +20,14 @@ export default function Dashboard({
   onCloseAlert,
 }) {
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-300">
+    <div className="flex min-h-screen bg-[#03060b] text-zinc-300">
       <Sidebar />
 
-      <main className="flex min-h-screen flex-1 flex-col">
+      <main className="relative flex flex-1 flex-col overflow-hidden">
+        {/* Global Background Accents */}
+        <div className="pointer-events-none absolute -left-20 -top-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-[120px]"></div>
+        <div className="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-rose-500/5 blur-[120px]"></div>
+
         <Header
           searchTerm={searchTerm}
           onSearchChange={onSearchChange}
@@ -31,24 +35,27 @@ export default function Dashboard({
           incidentLoading={incidentLoading}
           onAlertClick={onAlertClick}
         />
+        
         <StatsBar logs={logs} latestIncident={latestIncident} />
+        
         <FilterBar
           activeFilter={activeFilter}
           filterOptions={filterOptions}
           onFilterChange={onFilterChange}
         />
-        <div className="flex flex-1 flex-col xl:flex-row">
+        
+        <div className="relative flex flex-1 overflow-hidden">
           <LogsView logs={logs} />
+          
           {analysisPanelOpen && (
             <RightPanel
               incident={latestIncident}
-              loading={incidentLoading}
-              error={incidentError}
               onClose={onCloseAlert}
             />
           )}
         </div>
       </main>
     </div>
+
   );
 }

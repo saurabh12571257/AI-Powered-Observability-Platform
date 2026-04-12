@@ -1,42 +1,49 @@
 export default function LogRow({ log }) {
-    const levelColor =
-      log.severity === "high"
-        ? "text-red-300"
-        : log.level === "error"
-        ? "text-red-400"
-        : log.level === "warn"
-        ? "text-yellow-400"
-        : "text-emerald-400";
+  const levelStyles = {
+    error: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+    warn: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    info: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    success: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  };
 
-    const severityClasses =
-      log.severity === "high"
-        ? "border-red-500/40 bg-red-500/10 text-red-200"
-        : "border-slate-700 bg-slate-900 text-slate-400";
-  
-    return (
-      <div className="flex gap-4 py-2 px-3 rounded hover:bg-slate-800">
-  
-        <span className="text-xs text-slate-500 whitespace-nowrap">
-          {log.createdAt
-            ? new Date(log.createdAt).toLocaleTimeString()
-            : "N/A"}
-        </span>
-  
-        <span className={`text-xs font-bold uppercase ${levelColor}`}>
-          {log.level}
-        </span>
+  const levelColor = levelStyles[log.level?.toLowerCase()] || levelStyles.info;
 
-        <span className={`rounded border px-2 py-0.5 text-[10px] font-medium uppercase ${severityClasses}`}>
-          {log.severity || "medium"}
-        </span>
-  
-        <span className="text-xs text-indigo-400 uppercase">
-          {log.service}
-        </span>
-  
-        <span className="text-sm flex-1 break-all">
-          {log.message}
+  const severityStyles = log.severity === "high"
+    ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 border-transparent"
+    : "bg-zinc-800 text-zinc-400 border-zinc-700";
+
+  return (
+    <div className="group flex items-center gap-6 rounded-xl border border-transparent px-5 py-3 transition-all hover:border-white/5 hover:bg-zinc-900/30">
+      <div className="flex w-20 flex-col">
+        <span className="text-[10px] font-medium tabular-nums text-zinc-600">
+          {log.createdAt ? new Date(log.createdAt).toLocaleTimeString([], { hour12: false }) : "00:00:00"}
         </span>
       </div>
-    );
-  }
+
+      <div className="flex w-24 items-center">
+        <span className={`w-full rounded-md border py-1 text-center text-[9px] font-black tracking-widest uppercase ${levelColor}`}>
+          {log.level}
+        </span>
+      </div>
+
+      <div className="flex w-20 items-center">
+        <span className={`rounded-xl border px-3 py-0.5 text-[9px] font-bold uppercase transition-all group-hover:scale-105 ${severityStyles}`}>
+          {log.severity || "med"}
+        </span>
+      </div>
+
+      <div className="flex w-32 items-center">
+        <span className="text-[10px] font-black tracking-wider text-indigo-400/80 uppercase">
+          {log.service}
+        </span>
+      </div>
+
+      <div className="flex-1">
+        <code className="block flex-1 font-mono text-xs leading-relaxed text-zinc-300 transition-colors group-hover:text-white">
+          {log.message}
+        </code>
+      </div>
+    </div>
+  );
+}
+

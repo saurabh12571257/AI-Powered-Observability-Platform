@@ -10,53 +10,85 @@ export default function RightPanel({ incident, loading, error, onClose }) {
     : "High-severity incident analysis";
 
   return (
-    <aside className="w-full border-t border-slate-800 bg-slate-950/90 p-4 xl:w-96 xl:border-l xl:border-t-0">
-      <div className="mb-3 flex items-center justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-red-300">AI Incident Analysis</p>
-          <h3 className="text-lg font-semibold text-white">{title}</h3>
-          {incident?.triggerLog && (
-            <p className="mt-1 text-xs text-slate-400">
-              Trigger: {incident.triggerLog.service} [{incident.triggerLog.level}] severity=
-              {incident.triggerLog.severity}
-            </p>
-          )}
+    <aside className="absolute right-0 top-0 bottom-0 z-20 w-full xl:w-[450px] glass shadow-2xl animate-in slide-in-from-right duration-500">
+      <div className="flex h-full flex-col">
+        <div className="flex items-center justify-between p-8 border-b border-white/5">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <span className="text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase">AI Diagnostic</span>
+            </div>
+            <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-zinc-900/50 text-zinc-500 transition-all hover:bg-zinc-800 hover:text-white"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded border border-slate-700 px-3 py-1 text-xs text-slate-300 hover:bg-slate-800"
-        >
-          Close
-        </button>
-      </div>
+        <div className="flex-1 overflow-y-auto p-8 space-y-8">
+          {incident?.triggerLog && (
+            <div className="space-y-3">
+              <span className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">Trigger Event</span>
+              <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-black text-rose-400 uppercase tracking-wider">{incident.triggerLog.service}</span>
+                  <span className="text-[10px] font-medium text-rose-500/60 tabular-nums">
+                    {new Date(incident.triggerLog.createdAt).toLocaleTimeString()}
+                  </span>
+                </div>
+                <code className="text-xs text-rose-200/80 leading-relaxed block">
+                  {incident.triggerLog.message}
+                </code>
+              </div>
+            </div>
+          )}
 
-      <div className="mb-3 rounded-xl border border-slate-800 bg-slate-900 p-3 text-xs text-slate-400">
-        <p>Status: <span className="text-slate-200">{incident?.status || (loading ? "loading" : "unknown")}</span></p>
-        <p>Window: <span className="text-slate-200">5s before to 5s after trigger</span></p>
-        <p>Log count: <span className="text-slate-200">{incident?.logCount ?? 0}</span></p>
-      </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="glass-card p-4 rounded-xl">
+              <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Status</p>
+              <p className="text-xs font-bold text-white uppercase">{incident?.status || (loading ? "processing" : "idle")}</p>
+            </div>
+            <div className="glass-card p-4 rounded-xl">
+              <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">Context</p>
+              <p className="text-xs font-bold text-white uppercase">{incident?.logCount ?? 0} Events</p>
+            </div>
+          </div>
 
-      <div className="rounded-xl border border-red-500/20 bg-slate-900 p-4 text-sm text-slate-200">
-        {loading && <p>Loading the latest incident...</p>}
-        {!loading && error && <p className="text-red-300">{error}</p>}
-        {!loading && !error && incident?.status === "pending" && (
-          <p className="leading-6">
-            The backend has opened an incident window and is waiting for the 5-second post-trigger context to finish before sending the full timeline to AI.
-          </p>
-        )}
-        {!loading && !error && incident?.status === "failed" && (
-          <p className="whitespace-pre-wrap leading-6 text-red-300">
-            {incident.error || "The AI analysis failed."}
-          </p>
-        )}
-        {!loading && !error && incident?.status === "completed" && (
-          <p className="whitespace-pre-wrap leading-6">
-            {incident.analysis}
-          </p>
-        )}
+          <div className="space-y-4">
+            <span className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase italic">Neural Analysis</span>
+            <div className="relative">
+              <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-transparent to-transparent"></div>
+              <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6">
+                {loading && (
+                   <div className="flex flex-col gap-3">
+                     <div className="h-3 w-full animate-pulse rounded bg-white/5"></div>
+                     <div className="h-3 w-3/4 animate-pulse rounded bg-white/5"></div>
+                     <div className="h-3 w-5/6 animate-pulse rounded bg-white/5"></div>
+                   </div>
+                )}
+                {!loading && error && <p className="text-sm text-rose-400">{error}</p>}
+                {!loading && !error && incident?.status === "pending" && (
+                  <p className="text-sm leading-relaxed text-zinc-400">
+                    Acquiring telemetry samples... Synchronizing incident window logs (T-5s to T+5s).
+                  </p>
+                )}
+                {!loading && !error && incident?.status === "completed" && (
+                  <p className="text-sm leading-relaxed text-zinc-300 whitespace-pre-wrap mono">
+                    {incident.analysis}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </aside>
+
   );
 }
