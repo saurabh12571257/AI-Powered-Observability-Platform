@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+    {{- include "lumina.labels" . | nindent 4 }}
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lumina.selectorLabels" . | nindent 6 }}
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        {{- include "lumina.selectorLabels" . | nindent 8 }}
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: "{{ .Values.elasticsearch.image.repository }}:{{ .Values.elasticsearch.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.elasticsearch.service.port }}
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: xpack.security.enabled
+              value: "false"
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          resources:
+            {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  labels:
+    {{- include "lumina.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "lumina.selectorLabels" . | nindent 4 }}
+    app: elasticsearch
+  ports:
+    - port: {{ .Values.elasticsearch.service.port }}
+      targetPort: {{ .Values.elasticsearch.service.port }}

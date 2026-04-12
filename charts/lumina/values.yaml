@@ -1,0 +1,74 @@
+# Default values for lumina chart.
+
+backend:
+  replicaCount: 1
+  image:
+    repository: saurabhdave59/observability-backend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: NodePort
+    port: 8000
+    nodePort: 30007
+  env:
+    port: "8000"
+  secrets:
+    openaiApiKey: "REPLACEME"
+    mongoUri: "REPLACEME"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: saurabhdave59/observability-frontend
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+
+elasticsearch:
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: "8.12.0"
+  service:
+    port: 9200
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+kibana:
+  image:
+    repository: docker.elastic.co/kibana/kibana
+    tag: "8.12.0"
+  service:
+    port: 5601
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+        - path: /api/
+          pathType: Prefix
+          service: backend
+        - path: /socket.io/
+          pathType: Prefix
+          service: backend
+        - path: /kibana/
+          pathType: Prefix
+          service: kibana

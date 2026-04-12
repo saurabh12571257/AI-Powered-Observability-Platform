@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    {{- include "lumina.labels" . | nindent 4 }}
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lumina.selectorLabels" . | nindent 6 }}
+      app: kibana
+  template:
+    metadata:
+      labels:
+        {{- include "lumina.selectorLabels" . | nindent 8 }}
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: "{{ .Values.kibana.image.repository }}:{{ .Values.kibana.image.tag }}"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.kibana.service.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.kibana.service.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          ports:
+            - containerPort: {{ .Values.kibana.service.port }}
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://elasticsearch:{{ .Values.elasticsearch.service.port }}
+          resources:
+            {{- toYaml .Values.kibana.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-service
+  labels:
+    {{- include "lumina.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "lumina.selectorLabels" . | nindent 4 }}
+    app: kibana
+  ports:
+    - port: {{ .Values.kibana.service.port }}
+      targetPort: {{ .Values.kibana.service.port }}
