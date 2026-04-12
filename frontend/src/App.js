@@ -115,7 +115,9 @@ function App() {
   return (
     <Dashboard
       logs={filteredLogs}
+      allLogs={logs}
       searchTerm={searchTerm}
+
       onSearchChange={setSearchTerm}
       activeFilter={activeFilter}
       onFilterChange={setActiveFilter}

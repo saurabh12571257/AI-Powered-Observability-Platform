@@ -38,7 +38,7 @@ export default function AIChat() {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col min-h-0">
       <div 
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide min-h-0"
@@ -71,7 +71,7 @@ export default function AIChat() {
 
       <form 
         onSubmit={handleSend}
-        className="p-6 border-t border-white/5 bg-zinc-900/30"
+        className="flex-shrink-0 p-6 border-t border-white/5 bg-zinc-900/30"
       >
         <div className="relative group">
           <input

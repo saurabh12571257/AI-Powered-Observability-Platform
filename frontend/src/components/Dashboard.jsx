@@ -7,6 +7,7 @@ import RightPanel from "../components/RightPanel";
 
 export default function Dashboard({
   logs,
+  allLogs,
   searchTerm,
   onSearchChange,
   activeFilter,
@@ -36,7 +37,8 @@ export default function Dashboard({
           onAlertClick={onAlertClick}
         />
         
-        <StatsBar logs={logs} latestIncident={latestIncident} />
+        <StatsBar logs={allLogs || logs} latestIncident={latestIncident} />
+
         
         <FilterBar
           activeFilter={activeFilter}

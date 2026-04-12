@@ -76,3 +76,20 @@
 .animate-blink-red-fast {
   animation: blink-red 1.5s infinite ease-in-out;
 }
+
+@keyframes spark-fall {
+  0% { top: -20%; opacity: 0; }
+  10% { opacity: 1; height: 100px; }
+  90% { opacity: 1; height: 100px; }
+  100% { top: 110%; opacity: 0; height: 10px; }
+}
+
+.spark-tracer {
+  position: absolute;
+  right: -1px;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #fff, transparent);
+  box-shadow: 0 0 15px #fff, 0 0 5px #fff;
+  animation: spark-fall 2s infinite linear;
+  z-index: 50;
+}
