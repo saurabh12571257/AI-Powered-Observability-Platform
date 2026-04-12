@@ -1,110 +1,190 @@
-# Lumina: AI-Powered Observability Platform
+# AI-Powered Observability Platform
 
-Lumina is a premium, futuristic observability platform designed for real-time log ingestion, neural-pulse monitoring, and AI-driven incident resolution. It features a "Neon Glass" aesthetic and integrates advanced AI agents to help engineers troubleshoot system health instantly.
+A full-stack observability project for ingesting, storing, searching, and analyzing application logs with AI-assisted incident investigation.
 
-This repository combines a high-performance React dashboard, a Node.js/Express backend, MongoDB for log persistence, Elasticsearch 9 for lightning-fast search, and OpenAI GPT-4o for intelligent incident correlation and chat-based debugging.
+This repository combines a React dashboard, a Node.js/Express backend, MongoDB for log persistence, Elasticsearch for search and aggregations, OpenAI for incident summaries, and Docker/Kubernetes deployment assets.
 
-## 🚀 Key Features
+## Architecture
 
-- **Neural Pulse UI**: A high-contrast, "Neon Glass" aesthetic with dynamic micro-animations and a responsive sidebar.
-- **AI Chat Assistant (Lumina)**: An intelligent chatbot specifically guardrailed for log analysis and system troubleshooting.
-- **Incident Intelligence**: Automatic detection of error bursts with one-click AI investigation windows.
-- **Real-Time Streaming**: Live log feed via Socket.IO with sub-millisecond latency.
-- **Dual-Data Persistence**: Elastic-first search with MongoDB fallback for maximum reliability.
-- **Kubernetes Native**: Ready-to-use K8s manifests and professional-grade Helm charts.
+`Client -> Express API -> MongoDB + Elasticsearch -> OpenAI -> React Dashboard / Kibana`
 
----
+### Core flow
 
-## 🛠️ Tech Stack
+1. Applications send logs to `POST /api/logs`.
+2. The backend stores each log in MongoDB.
+3. The same log is indexed into Elasticsearch for search and analytics.
+4. Socket.IO emits the new log to connected dashboard clients.
+5. The frontend renders live logs, filters, and alert-driven AI analysis.
+6. Kibana can be exposed alongside the app for log exploration.
 
-- **Frontend**: React 19, Tailwind CSS 3.4, Axios, Socket.IO Client
-- **Backend**: Node.js 22, Express 5.2, Socket.IO 4.8, Mongoose 9.4
-- **Search & AI**: Elasticsearch 9.3, OpenAI GPT-4o (v6 SDK)
-- **Infrastructure**: Docker, NGINX, Kubernetes, Helm 3
-- **Visualization**: Kibana 8.12
+## Tech Stack
 
----
+- Frontend: React, Axios, Socket.IO Client, Tailwind CSS
+- Backend: Node.js, Express, Socket.IO, Mongoose
+- Data: MongoDB, Elasticsearch
+- AI: OpenAI API
+- Deployment: Docker, NGINX, Kubernetes, Ingress
+- Visualization: Kibana
 
-## 📂 Repository Structure
+## Key Features
+
+- Centralized log ingestion through REST endpoints
+- Dual-write pipeline to MongoDB and Elasticsearch
+- Full-text search across `message`, `service`, and `level`
+- Filterable log views by severity and service metadata
+- Pagination support for backend log queries
+- Real-time log streaming with Socket.IO
+- Dashboard metrics for total logs, warnings, error rate, and service count
+- AI-assisted incident analysis for recent or user-provided log bursts
+- Automatic frontend alerting for 5 consecutive error logs within a 4-second window
+- Docker Compose setup for backend, Elasticsearch, and Kibana
+- Kubernetes manifests for frontend, backend, Elasticsearch, Kibana, services, and ingress routing
+
+## Repository Structure
 
 ```text
-backend/                # Node.js Express server with log ingestion and AI logic
+backend/
   src/
-    config/             # DB and AI client configurations
-    controllers/        # Route handlers for logs, stats, and AI chat
-    services/           # Business logic for ES indexing and OpenAI integration
-frontend/               # React application with Neon Glass UI
+    config/
+    controllers/
+    models/
+    routes/
+    services/
+frontend/
   src/
-    components/         # Modular UI (AIChat, Dashboard, Sidebar, etc.)
-charts/                 # Lumina Helm charts for enterprise deployment
-k8s/                    # Standalone Kubernetes manifests
-docker-compose.yaml      # Local orchestration for dev environments
+    components/
+k8s/
+docker-compose.yaml
 ```
 
----
-
-## 🔌 Backend API
+## Backend API
 
 ### `POST /api/logs`
-Ingests a log entry. Example payload:
+
+Ingests a log entry and broadcasts it to connected clients.
+
+Example payload:
+
 ```json
 {
   "service": "auth-service",
   "level": "error",
-  "message": "Token validation failed"
+  "message": "Token validation failed for request 42"
 }
 ```
 
 ### `GET /api/logs`
-Paginated search from Elasticsearch. Supports `page`, `limit`, `level`, `service`, and `search` query params.
 
-### `POST /api/logs/chat`
-Interact with Lumina, the AI assistant.
+Returns paginated logs from Elasticsearch.
+
+Supported query parameters:
+
+- `page`
+- `limit`
+- `level`
+- `service`
+- `search`
+
+### `GET /api/logs/stats`
+
+Returns aggregated counts by log level from Elasticsearch.
+
+### `GET /api/logs/ai-analysis`
+### `POST /api/logs/ai-analysis`
+
+Generates AI-based analysis. If no logs are supplied, the service analyzes the 10 most recent indexed logs.
+
+Example request body:
+
 ```json
 {
-  "messages": [{ "role": "user", "content": "Why is the auth-service failing?" }]
+  "logs": [
+    {
+      "service": "payment-service",
+      "level": "error",
+      "message": "Stripe timeout"
+    }
+  ]
 }
 ```
 
----
+## Frontend Dashboard
 
-## 📦 Deployment
+The React dashboard includes:
 
-### 1. Local (Docker Compose)
-The Compose file provisions the backend, Elasticsearch, and Kibana.
+- Live log stream fed by Socket.IO
+- Search bar for client-side filtering
+- Severity filters for `all`, `error`, `warn`, and `info`
+- Stats cards for operational visibility
+- Incident side panel for AI-generated summaries
+- Alert state when 5 error logs occur within 4 seconds
+
+## Environment Variables
+
+The backend expects:
+
+```env
+PORT=8000
+MONGO_URI=<your_mongodb_connection_string>
+OPENAI_API_KEY=<your_openai_api_key>
+```
+
+## Local Development
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+### Docker Compose
+
+The repository includes a Compose file for:
+
+- `backend`
+- `elasticsearch`
+- `kibana`
+
+Run:
+
 ```bash
 docker compose up --build
 ```
-*Note: Ensure `MONGO_URI` and `OPENAI_API_KEY` are set in your environment.*
 
-### 2. Kubernetes (Manual)
+Note: the current Compose setup does not provision MongoDB, so `MONGO_URI` must point to an available MongoDB instance.
+
+## Kubernetes Deployment
+
+The `k8s/` directory contains manifests for:
+
+- Backend deployment and service
+- Frontend deployment and service
+- Elasticsearch deployment and service
+- Kibana deployment and service
+- Ingress routing for `/`, `/api/`, `/socket.io/`, and `/kibana/`
+
+Apply manifests with:
+
 ```bash
 kubectl apply -f k8s/
 ```
 
-### 3. Helm (Recommended)
-Deploy the full stack using the industry-standard Helm chart.
-```bash
-cd charts/lumina
-helm install lumina . --values values.yaml
-```
+The backend deployment reads `OPENAI_API_KEY` and `MONGO_URI` from Kubernetes secrets named `backend-secrets`.
 
----
+## Notable Implementation Details
 
-## ⚙️ Environment Variables
-
-The backend requires the following configuration:
-- `PORT`: Server port (default: 8000)
-- `MONGO_URI`: MongoDB connection string
-- `OPENAI_API_KEY`: Your OpenAI API key
-
----
-
-## 🎨 Design Philosophy
-Lumina uses a **Neon Glass** design system, prioritizing:
-- **Depth**: Translucent layers and frosted glass effects.
-- **Interactivity**: Fluid transitions and haptic-like hover responses.
-- **Clarity**: High-contrast typography and semantic color coding for log levels.
-
----
-*Built for the future of observability.*
+- Backend image uses `node:22-alpine`
+- Frontend is served with `nginx:alpine`
+- NGINX proxies `/api/` and `/socket.io/` traffic to `backend-service`
+- Elasticsearch runs in single-node mode in the provided manifests
+- Kibana is configured to connect to the in-cluster Elasticsearch service
