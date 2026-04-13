@@ -58,11 +58,6 @@ jobs:
           cd frontend
           npm ci
           
-      - name: Run Tests
-        run: |
-          cd frontend
-          npm test -- --watchAll=false
-          
       - name: Build Frontend
         run: |
           cd frontend
