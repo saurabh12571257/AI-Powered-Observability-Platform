@@ -24,18 +24,18 @@ spec:
             httpGet:
               path: /
               port: {{ .Values.kibana.service.port }}
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /
               port: {{ .Values.kibana.service.port }}
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 10
           ports:
             - containerPort: {{ .Values.kibana.service.port }}
           env:
