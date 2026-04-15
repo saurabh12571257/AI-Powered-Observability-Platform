@@ -55,7 +55,7 @@ ingress:
   enabled: true
   className: nginx
   hosts:
-    - host: chart-example.local
+    - host: localhost
       paths:
         - path: /
           pathType: Prefix
