@@ -12,9 +12,6 @@ backend:
     nodePort: 30007
   env:
     port: "8000"
-  secrets:
-    openaiApiKey: "REPLACEME"
-    mongoUri: "REPLACEME"
 
 frontend:
   replicaCount: 1
