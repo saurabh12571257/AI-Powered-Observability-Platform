@@ -74,6 +74,8 @@ jobs:
     needs: [ci-backend, ci-frontend]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       
@@ -95,7 +97,7 @@ jobs:
           context: ./backend
           file: ./backend/dockerfile
           push: true
-          tags: saurabhdave59/observability-backend:latest
+          tags: saurabhdave59/observability-backend:${{ github.sha }}
           
       - name: Build and Push Frontend
         uses: docker/build-push-action@v5
@@ -103,4 +105,17 @@ jobs:
           context: ./frontend
           file: ./frontend/dockerfile
           push: true
-          tags: saurabhdave59/observability-frontend:latest
+          tags: saurabhdave59/observability-frontend:${{ github.sha }}
+
+      - name: Update Helm values
+        run: |
+          yq -i '.backend.image.tag = "${{ github.sha }}"' charts/lumina/values.yaml
+          yq -i '.frontend.image.tag = "${{ github.sha }}"' charts/lumina/values.yaml
+
+      - name: Commit updated values
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add charts/lumina/values.yaml
+          git commit -m "Update image tag to ${{ github.sha }}" || echo "No changes"
+          git push
