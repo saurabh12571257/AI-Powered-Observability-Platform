@@ -5,24 +5,22 @@ backend:
   image:
     repository: saurabhdave59/observability-backend
     pullPolicy: Always
-    tag: "latest"
+    tag: "e7dd775e9acb8536c2911d86bd1f66d10f104640"
   service:
     type: NodePort
     port: 8000
     nodePort: 30007
   env:
     port: "8000"
-
 frontend:
   replicaCount: 2
   image:
     repository: saurabhdave59/observability-frontend
     pullPolicy: Always
-    tag: "latest"
+    tag: "e7dd775e9acb8536c2911d86bd1f66d10f104640"
   service:
     type: ClusterIP
     port: 80
-
 elasticsearch:
   image:
     repository: docker.elastic.co/elasticsearch/elasticsearch
@@ -36,7 +34,6 @@ elasticsearch:
     limits:
       memory: "1Gi"
       cpu: "1000m"
-
 kibana:
   image:
     repository: docker.elastic.co/kibana/kibana
@@ -50,7 +47,6 @@ kibana:
     limits:
       memory: "1Gi"
       cpu: "500m"
-
 ingress:
   enabled: true
   className: nginx
