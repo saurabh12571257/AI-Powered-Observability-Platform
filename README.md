@@ -447,16 +447,6 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 - The repository does not currently provision MongoDB in Docker Compose, raw manifests, or the Helm chart.
 - Local browser development is not fully plug-and-play yet because the frontend expects same-origin proxying for `/api` and `/socket.io`.
 
-## Suggested Next Improvements
-
-If you want to evolve the project further, the most valuable upgrades would be:
-
-- Make the Elasticsearch endpoint configurable through environment variables
-- Add a frontend development proxy for `npm start`
-- Include MongoDB in the local infrastructure story or provide a dedicated dev manifest
-- Add authentication and authorization for the dashboard and API
-- Add automated backend tests around ingestion, fallbacks, and incident lifecycle behavior
-
 ## Summary
 
 Lumina already covers the core observability loop well: ingest logs, stream them live, search them quickly, detect high-severity events, and get AI-assisted diagnostics without leaving the platform. The repository is especially strong as a portfolio-ready full-stack project because it shows application code, real-time updates, search infrastructure, AI integration, and deployment assets in one place.
