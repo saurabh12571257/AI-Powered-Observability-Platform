@@ -450,3 +450,4 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 ## Summary
 
 Lumina already covers the core observability loop well: ingest logs, stream them live, search them quickly, detect high-severity events, and get AI-assisted diagnostics without leaving the platform. The repository is especially strong as a portfolio-ready full-stack project because it shows application code, real-time updates, search infrastructure, AI integration, and deployment assets in one place.
+
