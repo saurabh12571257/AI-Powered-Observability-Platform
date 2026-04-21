@@ -3,7 +3,10 @@ import axios from "axios";
 
 export default function AIChat() {
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hello! I'm Lumina. I can help you analyze these logs. What would you like to know?" }
+    {
+      role: "assistant",
+      content: "Hello! I'm Lumina. I can help you analyze these logs. What would you like to know?",
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,12 +29,15 @@ export default function AIChat() {
 
     try {
       const response = await axios.post("/api/logs/chat", {
-        messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content }))
+        messages: [...messages, userMessage].map((m) => ({ role: m.role, content: m.content })),
       });
-      
+
       setMessages((prev) => [...prev, { role: "assistant", content: response.data.reply }]);
     } catch (error) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, I encountered an error. Please try again." }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Sorry, I encountered an error. Please try again." },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -39,21 +45,19 @@ export default function AIChat() {
 
   return (
     <div className="flex h-full flex-col min-h-0">
-      <div 
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide min-h-0"
-      >
-
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide min-h-0">
         {messages.map((msg, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
-              msg.role === "user" 
-                ? "bg-indigo-600 text-white rounded-tr-none" 
-                : "bg-zinc-800/80 text-zinc-200 border border-white/5 rounded-tl-none"
-            }`}>
+            <div
+              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                msg.role === "user"
+                  ? "bg-indigo-600 text-white rounded-tr-none"
+                  : "bg-zinc-800/80 text-zinc-200 border border-white/5 rounded-tl-none"
+              }`}
+            >
               {msg.content}
             </div>
           </div>
@@ -69,7 +73,7 @@ export default function AIChat() {
         )}
       </div>
 
-      <form 
+      <form
         onSubmit={handleSend}
         className="flex-shrink-0 p-6 border-t border-white/5 bg-zinc-900/30"
       >
@@ -87,7 +91,12 @@ export default function AIChat() {
             disabled={isLoading}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-indigo-400 hover:text-indigo-300 disabled:text-zinc-700 transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
             </svg>
           </button>

@@ -9,7 +9,9 @@ export default function FilterBar({ activeFilter, filterOptions, onFilterChange 
 
   return (
     <div className="flex flex-wrap items-center gap-3 bg-white/[0.02] px-8 py-4 border-b border-white/5">
-      <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase mr-2.5">Filter</span>
+      <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase mr-2.5">
+        Filter
+      </span>
       {filters.map((filter) => (
         <button
           type="button"
@@ -23,11 +25,10 @@ export default function FilterBar({ activeFilter, filterOptions, onFilterChange 
         >
           {filter.label}
           {activeFilter === filter.value && (
-             <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/20"></span>
+            <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/20"></span>
           )}
         </button>
       ))}
     </div>
-
   );
 }

@@ -1,0 +1,12 @@
+backend/node_modules
+frontend/node_modules
+frontend/build
+backend/package-lock.json
+frontend/package-lock.json
+frontend/public/favicon.ico
+frontend/public/logo192.png
+frontend/public/logo512.png
+frontend/src/assets
+frontend/src/logo.svg
+charts/lumina/templates/*.yaml
+charts/lumina/templates/*.tpl

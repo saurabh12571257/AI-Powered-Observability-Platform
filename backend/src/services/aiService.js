@@ -99,4 +99,3 @@ const chatWithLogs = async (messages, inputLogs) => {
 };
 
 module.exports = { analyzeLogs, analyzeIncidentWindow, chatWithLogs };
-

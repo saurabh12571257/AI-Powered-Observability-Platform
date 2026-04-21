@@ -12,12 +12,10 @@ const normalizeText = (value, fallback = "") => {
 const createLog = async (data) => {
   const normalizedData = {
     ...data,
-    service:
-      typeof data.service === "string" ? data.service.trim() : data.service,
+    service: typeof data.service === "string" ? data.service.trim() : data.service,
     level: normalizeText(data.level, "info"),
     severity: normalizeText(data.severity, "medium"),
-    message:
-      typeof data.message === "string" ? data.message.trim() : data.message,
+    message: typeof data.message === "string" ? data.message.trim() : data.message,
   };
 
   const log = await Log.create(normalizedData);
@@ -141,9 +139,7 @@ const getLogStats = async () => {
     return stats;
   } catch (error) {
     console.warn("Elasticsearch stats aggregation failed:", error.message);
-    const agg = await Log.aggregate([
-      { $group: { _id: "$level", count: { $sum: 1 } } },
-    ]);
+    const agg = await Log.aggregate([{ $group: { _id: "$level", count: { $sum: 1 } } }]);
 
     const stats = {};
     agg.forEach((item) => {
@@ -155,4 +151,3 @@ const getLogStats = async () => {
 };
 
 module.exports = { createLog, getLogs, getLogsInWindow, getLogStats };
-

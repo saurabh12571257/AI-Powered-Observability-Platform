@@ -8,26 +8,33 @@ export default function LogRow({ log }) {
 
   const levelColor = levelStyles[log.level?.toLowerCase()] || levelStyles.info;
 
-  const severityStyles = log.severity === "high"
-    ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 border-transparent"
-    : "bg-zinc-800 text-zinc-400 border-zinc-700";
+  const severityStyles =
+    log.severity === "high"
+      ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 border-transparent"
+      : "bg-zinc-800 text-zinc-400 border-zinc-700";
 
   return (
     <div className="group flex items-center gap-6 rounded-xl border border-transparent px-5 py-3 transition-all hover:border-white/5 hover:bg-zinc-900/30">
       <div className="flex w-20 flex-col">
         <span className="text-[10px] font-medium tabular-nums text-zinc-600">
-          {log.createdAt ? new Date(log.createdAt).toLocaleTimeString([], { hour12: false }) : "00:00:00"}
+          {log.createdAt
+            ? new Date(log.createdAt).toLocaleTimeString([], { hour12: false })
+            : "00:00:00"}
         </span>
       </div>
 
       <div className="flex w-24 items-center">
-        <span className={`w-full rounded-md border py-1 text-center text-[9px] font-black tracking-widest uppercase ${levelColor}`}>
+        <span
+          className={`w-full rounded-md border py-1 text-center text-[9px] font-black tracking-widest uppercase ${levelColor}`}
+        >
           {log.level}
         </span>
       </div>
 
       <div className="flex w-20 items-center">
-        <span className={`rounded-xl border px-3 py-0.5 text-[9px] font-bold uppercase transition-all group-hover:scale-105 ${severityStyles}`}>
+        <span
+          className={`rounded-xl border px-3 py-0.5 text-[9px] font-bold uppercase transition-all group-hover:scale-105 ${severityStyles}`}
+        >
           {log.severity || "med"}
         </span>
       </div>
@@ -46,4 +53,3 @@ export default function LogRow({ log }) {
     </div>
   );
 }
-

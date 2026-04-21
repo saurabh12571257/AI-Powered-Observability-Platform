@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const {
-    createLog,
-    getLogs,
-    getStats,
-    analyzeLogs,
-    getIncidents,
-    chatWithAI,
-  } = require("../controllers/logController");
+  createLog,
+  getLogs,
+  getStats,
+  analyzeLogs,
+  getIncidents,
+  chatWithAI,
+} = require("../controllers/logController");
 
 router.post("/logs", createLog);
 router.get("/logs", getLogs);
@@ -16,6 +16,5 @@ router.get("/incidents", getIncidents);
 router.get("/logs/ai-analysis", analyzeLogs);
 router.post("/logs/ai-analysis", analyzeLogs);
 router.post("/logs/chat", chatWithAI);
-
 
 module.exports = router;

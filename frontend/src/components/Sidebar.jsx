@@ -13,8 +13,9 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col border-r border-white/5 bg-zinc-950/40 backdrop-blur-xl transition-all duration-500 ease-in-out z-30 relative ${isOpen ? "w-64" : "w-20"
-        }`}
+      className={`hidden lg:flex flex-col border-r border-white/5 bg-zinc-950/40 backdrop-blur-xl transition-all duration-500 ease-in-out z-30 relative ${
+        isOpen ? "w-64" : "w-20"
+      }`}
     >
       {/* Neural Pulse Spark */}
       {isOpen && (
@@ -22,7 +23,6 @@ export default function Sidebar() {
           <div className="spark-tracer" />
         </div>
       )}
-
 
       <div className="flex flex-col items-center py-8 h-full relative z-10">
         {/* Log Icon Button - Always White */}
@@ -50,7 +50,9 @@ export default function Sidebar() {
         )}
 
         {/* Menu Items */}
-        <div className={`mt-12 w-full px-4 space-y-2 transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"}`}>
+        <div
+          className={`mt-12 w-full px-4 space-y-2 transition-all duration-300 ${isOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 pointer-events-none"}`}
+        >
           {menuItems.map((item) => (
             <button
               key={item.label}
@@ -63,15 +65,24 @@ export default function Sidebar() {
           ))}
         </div>
 
-
-
         {/* Toggle Indicator */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`mt-auto mb-4 p-2 text-zinc-600 hover:text-white transition-colors ${isOpen ? "rotate-0" : "rotate-180"}`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
       </div>

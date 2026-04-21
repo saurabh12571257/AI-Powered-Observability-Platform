@@ -36,29 +36,21 @@ export default function Dashboard({
           incidentLoading={incidentLoading}
           onAlertClick={onAlertClick}
         />
-        
+
         <StatsBar logs={allLogs || logs} latestIncident={latestIncident} />
 
-        
         <FilterBar
           activeFilter={activeFilter}
           filterOptions={filterOptions}
           onFilterChange={onFilterChange}
         />
-        
-        {analysisPanelOpen && (
-          <RightPanel
-            incident={latestIncident}
-            onClose={onCloseAlert}
-          />
-        )}
-        
+
+        {analysisPanelOpen && <RightPanel incident={latestIncident} onClose={onCloseAlert} />}
+
         <div className="relative flex flex-1 overflow-hidden">
           <LogsView logs={logs} />
         </div>
-
       </main>
     </div>
-
   );
 }

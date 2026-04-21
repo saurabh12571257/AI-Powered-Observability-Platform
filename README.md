@@ -61,15 +61,15 @@ flowchart LR
 
 ## Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Frontend | React 19, Axios, Socket.IO Client, Tailwind-style utility classes |
-| Backend | Node.js, Express 5, Socket.IO, Mongoose |
-| Storage | MongoDB |
-| Search and analytics | Elasticsearch 8 |
-| AI | OpenAI API using `gpt-4o-mini` |
-| Packaging and deploy | Docker, NGINX, Kubernetes, Helm |
-| Exploration | Kibana |
+| Layer                | Technology                                                        |
+| -------------------- | ----------------------------------------------------------------- |
+| Frontend             | React 19, Axios, Socket.IO Client, Tailwind-style utility classes |
+| Backend              | Node.js, Express 5, Socket.IO, Mongoose                           |
+| Storage              | MongoDB                                                           |
+| Search and analytics | Elasticsearch 8                                                   |
+| AI                   | OpenAI API using `gpt-4o-mini`                                    |
+| Packaging and deploy | Docker, NGINX, Kubernetes, Helm                                   |
+| Exploration          | Kibana                                                            |
 
 ## Repository Layout
 
@@ -101,17 +101,17 @@ flowchart LR
 
 ## Backend API
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/logs` | Ingest a log, broadcast it over Socket.IO, and possibly create or resolve an incident |
-| `GET` | `/api/logs` | Fetch paginated logs with optional filters |
-| `GET` | `/api/logs/stats` | Return counts grouped by log level |
-| `GET` | `/api/incidents` | Return recent incidents, optionally filtered by status |
-| `GET` | `/api/logs/ai-analysis` | Analyze the 10 most recent Elasticsearch logs |
-| `POST` | `/api/logs/ai-analysis` | Analyze an explicit `logs` array supplied in the request body |
-| `POST` | `/api/logs/chat` | Chat with the AI assistant using recent logs as context |
-| `GET` | `/health` | Liveness probe |
-| `GET` | `/ready` | Readiness probe based on MongoDB connectivity |
+| Method | Path                    | Purpose                                                                               |
+| ------ | ----------------------- | ------------------------------------------------------------------------------------- |
+| `POST` | `/api/logs`             | Ingest a log, broadcast it over Socket.IO, and possibly create or resolve an incident |
+| `GET`  | `/api/logs`             | Fetch paginated logs with optional filters                                            |
+| `GET`  | `/api/logs/stats`       | Return counts grouped by log level                                                    |
+| `GET`  | `/api/incidents`        | Return recent incidents, optionally filtered by status                                |
+| `GET`  | `/api/logs/ai-analysis` | Analyze the 10 most recent Elasticsearch logs                                         |
+| `POST` | `/api/logs/ai-analysis` | Analyze an explicit `logs` array supplied in the request body                         |
+| `POST` | `/api/logs/chat`        | Chat with the AI assistant using recent logs as context                               |
+| `GET`  | `/health`               | Liveness probe                                                                        |
+| `GET`  | `/ready`                | Readiness probe based on MongoDB connectivity                                         |
 
 ### `POST /api/logs`
 
@@ -199,11 +199,11 @@ The dashboard in `frontend/` provides:
 
 The backend reads the following environment variables:
 
-| Variable | Required | Default | Notes |
-| --- | --- | --- | --- |
-| `PORT` | No | `8000` | Backend HTTP port |
-| `MONGO_URI` | Yes | None | Required for startup; also used by `/ready` |
-| `OPENAI_API_KEY` | Required for AI features | None | Needed for incident analysis and chat endpoints |
+| Variable         | Required                 | Default | Notes                                           |
+| ---------------- | ------------------------ | ------- | ----------------------------------------------- |
+| `PORT`           | No                       | `8000`  | Backend HTTP port                               |
+| `MONGO_URI`      | Yes                      | None    | Required for startup; also used by `/ready`     |
+| `OPENAI_API_KEY` | Required for AI features | None    | Needed for incident analysis and chat endpoints |
 
 ### Important code-level assumptions
 
@@ -428,14 +428,14 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 
 ## Deployment Assets Included
 
-| Path | Purpose |
-| --- | --- |
-| `docker-compose.yaml` | Starts backend, Elasticsearch, and Kibana |
-| `k8s/` | Raw Kubernetes manifests for the application stack |
-| `charts/lumina/` | Helm chart for the stack |
-| `frontend/nginx.conf` | NGINX config for serving the React build and defining same-origin API and Socket.IO proxy routes |
-| `backend/test-socket.js` | Small client for testing real-time events |
-| `curl commands` | Example ingestion requests |
+| Path                     | Purpose                                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| `docker-compose.yaml`    | Starts backend, Elasticsearch, and Kibana                                                        |
+| `k8s/`                   | Raw Kubernetes manifests for the application stack                                               |
+| `charts/lumina/`         | Helm chart for the stack                                                                         |
+| `frontend/nginx.conf`    | NGINX config for serving the React build and defining same-origin API and Socket.IO proxy routes |
+| `backend/test-socket.js` | Small client for testing real-time events                                                        |
+| `curl commands`          | Example ingestion requests                                                                       |
 
 ## Operational Notes and Current Limitations
 
@@ -450,5 +450,3 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 ## Summary
 
 Lumina already covers the core observability loop well: ingest logs, stream them live, search them quickly, detect high-severity events, and get AI-assisted diagnostics without leaving the platform. The repository is especially strong as a portfolio-ready full-stack project because it shows application code, real-time updates, search infrastructure, AI integration, and deployment assets in one place.
-
-

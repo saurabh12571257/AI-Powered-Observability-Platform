@@ -22,11 +22,12 @@ function App() {
   const [incidentError, setIncidentError] = useState("");
 
   useEffect(() => {
-    axios.get("/api/logs", {
-      params: {
-        limit: 100,
-      },
-    })
+    axios
+      .get("/api/logs", {
+        params: {
+          limit: 100,
+        },
+      })
       .then((res) => {
         setLogs(res.data.logs || []);
       })
@@ -34,11 +35,12 @@ function App() {
         console.error("Error fetching logs:", err);
       });
 
-    axios.get("/api/incidents", {
-      params: {
-        limit: 1,
-      },
-    })
+    axios
+      .get("/api/incidents", {
+        params: {
+          limit: 1,
+        },
+      })
       .then((res) => {
         const [incident] = res.data.incidents || [];
         setLatestIncident(incident || null);
@@ -76,8 +78,9 @@ function App() {
     };
   }, []);
 
-  const levelOptions = Array.from(new Set(logs.map((log) => log.level).filter(Boolean)))
-    .sort((a, b) => a.localeCompare(b));
+  const levelOptions = Array.from(new Set(logs.map((log) => log.level).filter(Boolean))).sort(
+    (a, b) => a.localeCompare(b)
+  );
 
   useEffect(() => {
     if (activeFilter !== "all" && !levelOptions.includes(activeFilter)) {
@@ -107,7 +110,6 @@ function App() {
     setAnalysisPanelOpen(true);
   };
 
-
   const handleCloseAlert = () => {
     setAnalysisPanelOpen(false);
   };
@@ -117,7 +119,6 @@ function App() {
       logs={filteredLogs}
       allLogs={logs}
       searchTerm={searchTerm}
-
       onSearchChange={setSearchTerm}
       activeFilter={activeFilter}
       onFilterChange={setActiveFilter}
