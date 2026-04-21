@@ -5,7 +5,7 @@ backend:
   image:
     repository: saurabhdave59/observability-backend
     pullPolicy: Always
-    tag: "e7dd775e9acb8536c2911d86bd1f66d10f104640"
+    tag: "1e6bdcf1e92d7bab5955c7c48a45e78b951110fc"
   service:
     type: NodePort
     port: 8000
@@ -17,7 +17,7 @@ frontend:
   image:
     repository: saurabhdave59/observability-frontend
     pullPolicy: Always
-    tag: "e7dd775e9acb8536c2911d86bd1f66d10f104640"
+    tag: "1e6bdcf1e92d7bab5955c7c48a45e78b951110fc"
   service:
     type: ClusterIP
     port: 80
