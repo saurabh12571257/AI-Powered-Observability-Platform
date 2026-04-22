@@ -10,9 +10,19 @@ export default function Dashboard({
   allLogs,
   searchTerm,
   onSearchChange,
-  activeFilter,
-  onFilterChange,
-  filterOptions,
+  activeLevelFilter,
+  onLevelFilterChange,
+  levelOptions,
+  activeServiceFilter,
+  onServiceFilterChange,
+  serviceOptions,
+  activeSeverityFilter,
+  onSeverityFilterChange,
+  severityOptions,
+  visibleLogCount,
+  totalLogCount,
+  hasActiveFilters,
+  onResetView,
   latestIncident,
   incidentLoading,
   incidentError,
@@ -40,12 +50,29 @@ export default function Dashboard({
         <StatsBar logs={allLogs || logs} latestIncident={latestIncident} />
 
         <FilterBar
-          activeFilter={activeFilter}
-          filterOptions={filterOptions}
-          onFilterChange={onFilterChange}
+          activeLevelFilter={activeLevelFilter}
+          onLevelFilterChange={onLevelFilterChange}
+          levelOptions={levelOptions}
+          activeServiceFilter={activeServiceFilter}
+          onServiceFilterChange={onServiceFilterChange}
+          serviceOptions={serviceOptions}
+          activeSeverityFilter={activeSeverityFilter}
+          onSeverityFilterChange={onSeverityFilterChange}
+          severityOptions={severityOptions}
+          visibleLogCount={visibleLogCount}
+          totalLogCount={totalLogCount}
+          hasActiveFilters={hasActiveFilters}
+          onResetView={onResetView}
         />
 
-        {analysisPanelOpen && <RightPanel incident={latestIncident} onClose={onCloseAlert} />}
+        {analysisPanelOpen && (
+          <RightPanel
+            incident={latestIncident}
+            loading={incidentLoading}
+            error={incidentError}
+            onClose={onCloseAlert}
+          />
+        )}
 
         <div className="relative flex flex-1 overflow-hidden">
           <LogsView logs={logs} />

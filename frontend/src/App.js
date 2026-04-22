@@ -3,6 +3,13 @@ import { io } from "socket.io-client";
 import axios from "axios";
 
 import Dashboard from "./components/Dashboard";
+import {
+  ALL_FILTER_VALUE,
+  SEVERITY_PRIORITY,
+  filterLogs,
+  getLogFilterOptions,
+  hasActiveLogFilters,
+} from "./utils/logFilters";
 
 const socket = io("/");
 
@@ -15,7 +22,9 @@ function getIncidentTimestamp(incident) {
 function App() {
   const [logs, setLogs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeLevelFilter, setActiveLevelFilter] = useState(ALL_FILTER_VALUE);
+  const [activeServiceFilter, setActiveServiceFilter] = useState(ALL_FILTER_VALUE);
+  const [activeSeverityFilter, setActiveSeverityFilter] = useState(ALL_FILTER_VALUE);
   const [analysisPanelOpen, setAnalysisPanelOpen] = useState(false);
   const [latestIncident, setLatestIncident] = useState(null);
   const [incidentLoading, setIncidentLoading] = useState(true);
@@ -78,33 +87,53 @@ function App() {
     };
   }, []);
 
-  const levelOptions = Array.from(new Set(logs.map((log) => log.level).filter(Boolean))).sort(
-    (a, b) => a.localeCompare(b)
-  );
+  const levelOptions = getLogFilterOptions(logs, "level");
+  const serviceOptions = getLogFilterOptions(logs, "service");
+  const severityOptions = getLogFilterOptions(logs, "severity", SEVERITY_PRIORITY);
 
   useEffect(() => {
-    if (activeFilter !== "all" && !levelOptions.includes(activeFilter)) {
-      setActiveFilter("all");
+    if (
+      activeLevelFilter !== ALL_FILTER_VALUE &&
+      !levelOptions.some((option) => option.value === activeLevelFilter)
+    ) {
+      setActiveLevelFilter(ALL_FILTER_VALUE);
     }
-  }, [activeFilter, levelOptions]);
+  }, [activeLevelFilter, levelOptions]);
 
-  const filteredLogs = logs.filter((log) => {
-    const matchesFilter = activeFilter === "all" ? true : log.level === activeFilter;
-
-    if (!matchesFilter) {
-      return false;
+  useEffect(() => {
+    if (
+      activeServiceFilter !== ALL_FILTER_VALUE &&
+      !serviceOptions.some((option) => option.value === activeServiceFilter)
+    ) {
+      setActiveServiceFilter(ALL_FILTER_VALUE);
     }
+  }, [activeServiceFilter, serviceOptions]);
 
-    const query = searchTerm.trim().toLowerCase();
-
-    if (!query) {
-      return true;
+  useEffect(() => {
+    if (
+      activeSeverityFilter !== ALL_FILTER_VALUE &&
+      !severityOptions.some((option) => option.value === activeSeverityFilter)
+    ) {
+      setActiveSeverityFilter(ALL_FILTER_VALUE);
     }
+  }, [activeSeverityFilter, severityOptions]);
 
-    return [log.message, log.service, log.level, log.severity]
-      .filter(Boolean)
-      .some((value) => value.toLowerCase().includes(query));
-  });
+  const filters = {
+    searchTerm,
+    level: activeLevelFilter,
+    service: activeServiceFilter,
+    severity: activeSeverityFilter,
+  };
+
+  const filteredLogs = filterLogs(logs, filters);
+  const hasActiveFilters = hasActiveLogFilters(filters);
+
+  const handleResetView = () => {
+    setSearchTerm("");
+    setActiveLevelFilter(ALL_FILTER_VALUE);
+    setActiveServiceFilter(ALL_FILTER_VALUE);
+    setActiveSeverityFilter(ALL_FILTER_VALUE);
+  };
 
   const handleAlertClick = () => {
     setAnalysisPanelOpen(true);
@@ -120,9 +149,19 @@ function App() {
       allLogs={logs}
       searchTerm={searchTerm}
       onSearchChange={setSearchTerm}
-      activeFilter={activeFilter}
-      onFilterChange={setActiveFilter}
-      filterOptions={levelOptions}
+      activeLevelFilter={activeLevelFilter}
+      onLevelFilterChange={setActiveLevelFilter}
+      levelOptions={levelOptions}
+      activeServiceFilter={activeServiceFilter}
+      onServiceFilterChange={setActiveServiceFilter}
+      serviceOptions={serviceOptions}
+      activeSeverityFilter={activeSeverityFilter}
+      onSeverityFilterChange={setActiveSeverityFilter}
+      severityOptions={severityOptions}
+      visibleLogCount={filteredLogs.length}
+      totalLogCount={logs.length}
+      hasActiveFilters={hasActiveFilters}
+      onResetView={handleResetView}
       latestIncident={latestIncident}
       incidentLoading={incidentLoading}
       incidentError={incidentError}
