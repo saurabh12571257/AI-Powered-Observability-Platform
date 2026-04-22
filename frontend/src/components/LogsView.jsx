@@ -1,11 +1,14 @@
 import LogRow from "./LogRow";
 
 export default function LogsView({ logs }) {
+  const getLogKey = (log, index) =>
+    log._id || log.logId || `${log.createdAt || "no-timestamp"}-${log.service || "unknown"}-${index}`;
+
   return (
     <div className="flex-1 overflow-y-auto px-8 py-6 [scrollbar-gutter:stable]">
       <div className="flex flex-col gap-2">
         {logs.length > 0 ? (
-          logs.map((log, i) => <LogRow key={i} log={log} />)
+          logs.map((log, index) => <LogRow key={getLogKey(log, index)} log={log} />)
         ) : (
           <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/10">
             <svg

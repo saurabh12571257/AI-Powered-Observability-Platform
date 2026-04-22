@@ -79,7 +79,10 @@ const getLogs = async (query) => {
 
     return {
       total: result.hits.total.value,
-      logs: result.hits.hits.map((hit) => hit._source),
+      logs: result.hits.hits.map((hit) => ({
+        _id: hit._source._id || hit._id,
+        ...hit._source,
+      })),
     };
   } catch (error) {
     console.warn("Elasticsearch search failed, falling back to MongoDB:", error.message);
