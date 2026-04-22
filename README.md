@@ -52,6 +52,7 @@ flowchart LR
 - Dual-write log pipeline to MongoDB and Elasticsearch
 - Live dashboard updates through Socket.IO
 - Search and filter support by `level`, `severity`, `service`, and free-text query
+- Multi-dimensional dashboard controls for `level`, `service`, `severity`, and resettable views
 - Dashboard metrics for total streams, error rate, critical alerts, and AI diagnostics state
 - Automatic incident creation for `high` severity logs
 - AI-generated root-cause style summaries for incident windows
@@ -190,7 +191,7 @@ The dashboard in `frontend/` provides:
 
 - A live log stream updated via Socket.IO
 - Search across message, service, level, and severity
-- Dynamic filter pills built from the log levels currently present
+- Dynamic filters for level, service, and severity with a resettable filtered view count
 - Top-line metrics for total logs, error rate, high-severity alerts, and AI diagnostic state
 - An incident drawer that shows trigger log, status, context count, and AI analysis
 - An interactive chat tab for follow-up troubleshooting questions
