@@ -4,7 +4,7 @@ Lumina is a full-stack observability project for ingesting, storing, searching, 
 
 This repository also includes Docker, Kubernetes, and Helm deployment assets, plus Kibana for direct log exploration.
 
-![Lumina dashboard preview](frontend/src/assets/Dashboard.png)
+![Lumina dashboard preview](frontend/src/assets/DashboardMain.png)
 
 ## Overview
 
