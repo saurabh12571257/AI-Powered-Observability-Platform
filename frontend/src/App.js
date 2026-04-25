@@ -12,11 +12,26 @@ import {
 } from "./utils/logFilters";
 
 const socket = io("/");
+const THEME_STORAGE_KEY = "lumina-theme";
 
 function getIncidentTimestamp(incident) {
   const value = incident?.createdAt || incident?.updatedAt;
   const parsed = value ? new Date(value).getTime() : Number.NaN;
   return Number.isNaN(parsed) ? 0 : parsed;
+}
+
+function getInitialTheme() {
+  if (typeof window === "undefined") {
+    return "dark";
+  }
+
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+
+  if (savedTheme === "dark" || savedTheme === "light") {
+    return savedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
 function App() {
@@ -29,6 +44,13 @@ function App() {
   const [latestIncident, setLatestIncident] = useState(null);
   const [incidentLoading, setIncidentLoading] = useState(true);
   const [incidentError, setIncidentError] = useState("");
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   useEffect(() => {
     axios
@@ -143,8 +165,14 @@ function App() {
     setAnalysisPanelOpen(false);
   };
 
+  const handleThemeToggle = () => {
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+  };
+
   return (
     <Dashboard
+      theme={theme}
+      onToggleTheme={handleThemeToggle}
       logs={filteredLogs}
       allLogs={logs}
       searchTerm={searchTerm}
