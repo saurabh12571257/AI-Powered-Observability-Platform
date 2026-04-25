@@ -6,6 +6,8 @@ import LogsView from "../components/LogsView";
 import RightPanel from "../components/RightPanel";
 
 export default function Dashboard({
+  theme,
+  onToggleTheme,
   logs,
   allLogs,
   searchTerm,
@@ -31,13 +33,21 @@ export default function Dashboard({
   onCloseAlert,
 }) {
   return (
-    <div className="flex min-h-screen bg-[#03060b] text-zinc-300">
-      <Sidebar />
+    <div className="theme-shell flex min-h-screen">
+      <Sidebar theme={theme} onToggleTheme={onToggleTheme} />
 
       <main className="relative flex flex-1 flex-col overflow-hidden">
         {/* Global Background Accents */}
-        <div className="pointer-events-none absolute -left-20 -top-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-[120px]"></div>
-        <div className="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-rose-500/5 blur-[120px]"></div>
+        <div
+          className={`pointer-events-none absolute -left-20 -top-20 h-96 w-96 rounded-full blur-[120px] ${
+            theme === "dark" ? "bg-indigo-500/10" : "bg-sky-400/20"
+          }`}
+        ></div>
+        <div
+          className={`pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full blur-[120px] ${
+            theme === "dark" ? "bg-rose-500/5" : "bg-amber-300/25"
+          }`}
+        ></div>
 
         <Header
           searchTerm={searchTerm}

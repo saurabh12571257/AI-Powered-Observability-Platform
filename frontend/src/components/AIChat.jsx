@@ -55,7 +55,7 @@ export default function AIChat() {
               className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                 msg.role === "user"
                   ? "bg-indigo-600 text-white rounded-tr-none"
-                  : "bg-zinc-800/80 text-zinc-200 border border-white/5 rounded-tl-none"
+                  : "theme-chat-bubble rounded-tl-none"
               }`}
             >
               {msg.content}
@@ -64,10 +64,10 @@ export default function AIChat() {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-zinc-800/80 border border-white/5 rounded-2xl rounded-tl-none px-4 py-3 flex gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-500 animate-bounce"></span>
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-500 animate-bounce [animation-delay:0.2s]"></span>
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-500 animate-bounce [animation-delay:0.4s]"></span>
+            <div className="theme-chat-bubble flex gap-1 rounded-2xl rounded-tl-none px-4 py-3">
+              <span className="theme-text-muted h-1.5 w-1.5 animate-bounce rounded-full bg-current"></span>
+              <span className="theme-text-muted h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:0.2s]"></span>
+              <span className="theme-text-muted h-1.5 w-1.5 animate-bounce rounded-full bg-current [animation-delay:0.4s]"></span>
             </div>
           </div>
         )}
@@ -75,7 +75,7 @@ export default function AIChat() {
 
       <form
         onSubmit={handleSend}
-        className="flex-shrink-0 p-6 border-t border-white/5 bg-zinc-900/30"
+        className="theme-panel-soft theme-border-subtle flex-shrink-0 border-t p-6"
       >
         <div className="relative group">
           <input
@@ -84,7 +84,7 @@ export default function AIChat() {
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
             placeholder="Ask anything about the logs..."
-            className="w-full rounded-xl border border-white/10 bg-zinc-950/50 py-3 pl-4 pr-12 text-sm text-white placeholder:text-zinc-600 outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5"
+            className="theme-input w-full rounded-xl border py-3 pl-4 pr-12 text-sm outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5"
           />
           <button
             type="submit"
