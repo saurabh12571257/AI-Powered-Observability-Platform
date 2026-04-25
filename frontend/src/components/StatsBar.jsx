@@ -91,26 +91,28 @@ export default function StatsBar({ logs, latestIncident }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-white/5">
+    <div className="theme-border-subtle grid grid-cols-2 border-b lg:grid-cols-4">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="group flex flex-col justify-between p-6 transition-all hover:bg-white/[0.02] border-r border-white/5 last:border-r-0"
+          className="theme-border-subtle theme-card-hover group flex flex-col justify-between border-r p-6 transition-all last:border-r-0"
         >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase">
+            <span className="theme-text-muted text-[10px] font-black tracking-[0.2em] uppercase">
               {stat.label}
             </span>
-            <span className="text-zinc-600 group-hover:text-indigo-500/50 transition-colors">
+            <span className="theme-text-faint group-hover:text-indigo-500/50 transition-colors">
               {stat.icon}
             </span>
           </div>
           <div className="flex flex-col">
-            <span className={`text-3xl font-bold tracking-tight ${stat.color || "text-white"}`}>
+            <span
+              className={`text-3xl font-bold tracking-tight ${stat.color || "theme-text-primary"}`}
+            >
               {stat.value}
             </span>
             {stat.label === "ERROR RATE" && (
-              <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div className="theme-progress-track mt-2 h-1 w-full overflow-hidden rounded-full">
                 <div
                   className="h-full bg-rose-500 transition-all duration-1000"
                   style={{ width: errorRate }}

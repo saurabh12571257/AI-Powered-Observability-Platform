@@ -19,7 +19,7 @@ export default function Header({
         : "No High-Severity Incident";
 
   return (
-    <header className="sticky top-0 z-10 flex min-h-20 items-center justify-between px-8 glass border-x-0 border-t-0">
+    <header className="glass theme-border-subtle sticky top-0 z-10 flex min-h-20 items-center justify-between border-x-0 border-t-0 px-8">
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -34,7 +34,7 @@ export default function Header({
         <div className="relative">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500"
+            className="theme-text-muted absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -51,7 +51,7 @@ export default function Header({
             value={searchTerm}
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Search logs, services..."
-            className="w-80 rounded-xl border border-white/5 bg-zinc-900/50 py-2.5 pl-10 pr-4 text-xs text-zinc-200 outline-none transition-all placeholder:text-zinc-600 focus:border-indigo-500/50 focus:bg-zinc-900 focus:ring-4 focus:ring-indigo-500/10"
+            className="theme-input w-80 rounded-xl border py-2.5 pl-10 pr-4 text-xs outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
           />
         </div>
       </div>
@@ -63,8 +63,8 @@ export default function Header({
           disabled={incidentLoading}
           className={`group relative flex items-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-xs font-semibold transition-all border ${
             incidentActive
-              ? "border-rose-500/30 bg-zinc-900/50 text-rose-500 shadow-lg shadow-rose-500/10 hover:scale-[1.02] active:scale-[0.98] animate-blink-red-fast"
-              : "border-emerald-500/30 bg-zinc-900/50 text-emerald-500 animate-blink-green-slow"
+              ? "theme-panel-strong border-rose-500/30 text-rose-500 shadow-lg shadow-rose-500/10 hover:scale-[1.02] active:scale-[0.98] animate-blink-red-fast"
+              : "theme-panel-strong border-emerald-500/30 text-emerald-500 animate-blink-green-slow"
           }`}
         >
           {incidentActive && (

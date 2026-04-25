@@ -1,14 +1,14 @@
 function FilterSelect({ label, value, options, onChange, allLabel, ariaLabel }) {
   return (
-    <label className="flex items-center gap-2 rounded-full border border-white/5 bg-zinc-950/40 px-3 py-2">
-      <span className="text-[10px] font-black uppercase tracking-[0.24em] text-zinc-600">
+    <label className="theme-select-shell flex items-center gap-2 rounded-full border px-3 py-2">
+      <span className="theme-text-muted text-[10px] font-black uppercase tracking-[0.24em]">
         {label}
       </span>
       <select
         aria-label={ariaLabel}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-w-28 bg-transparent text-[11px] font-semibold text-zinc-200 outline-none"
+        className="theme-text-primary min-w-28 bg-transparent text-[11px] font-semibold outline-none"
       >
         <option value="all">{allLabel}</option>
         {options.map((option) => (
@@ -42,9 +42,9 @@ export default function FilterBar({
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-white/5 bg-white/[0.02] px-8 py-4">
+    <div className="theme-panel-soft theme-border-subtle flex flex-wrap items-center gap-3 border-b px-8 py-4">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="mr-2.5 text-[10px] font-black uppercase tracking-widest text-zinc-600">
+        <span className="theme-text-muted mr-2.5 text-[10px] font-black uppercase tracking-widest">
           Level
         </span>
         {filters.map((filter) => (
@@ -55,7 +55,7 @@ export default function FilterBar({
             className={`relative overflow-hidden rounded-full border px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
               activeLevelFilter === filter.value
                 ? "border-indigo-500 bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-                : "border-white/5 bg-zinc-900/50 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+                : "theme-filter-chip"
             }`}
           >
             {filter.label}
@@ -98,7 +98,7 @@ export default function FilterBar({
           type="button"
           onClick={onResetView}
           disabled={!hasActiveFilters}
-          className="rounded-full border border-white/5 bg-zinc-950/40 px-4 py-2 text-[11px] font-semibold text-zinc-300 transition-all hover:border-white/10 hover:bg-zinc-900 disabled:cursor-not-allowed disabled:text-zinc-600"
+          className="theme-button-surface rounded-full border px-4 py-2 text-[11px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50"
         >
           Reset View
         </button>

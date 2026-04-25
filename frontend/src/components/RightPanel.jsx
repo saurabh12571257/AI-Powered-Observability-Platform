@@ -62,12 +62,12 @@ export default function RightPanel({ incident, loading, error, onClose }) {
         onMouseDown={startResizing}
         className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize transition-colors hover:bg-indigo-500/20 group z-30"
       >
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-1 rounded-full bg-zinc-800 group-hover:bg-indigo-500/50 transition-colors"></div>
+        <div className="theme-resize-grip absolute left-1/2 top-1/2 h-8 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors group-hover:bg-indigo-500/50"></div>
       </div>
 
       <div className="flex h-full flex-col min-h-0 overflow-hidden">
         {/* Header */}
-        <div className="flex-shrink-0 flex items-center justify-between p-8 border-b border-white/5">
+        <div className="theme-border-subtle flex flex-shrink-0 items-center justify-between border-b p-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span
@@ -79,12 +79,12 @@ export default function RightPanel({ incident, loading, error, onClose }) {
                 {activeTab === "chat" ? "Lumina Chat" : "AI Diagnostic"}
               </span>
             </div>
-            <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+            <h3 className="theme-text-primary text-xl font-bold tracking-tight">{title}</h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/5 bg-zinc-900/50 text-zinc-500 transition-all hover:bg-zinc-800 hover:text-white"
+            className="theme-button-surface flex h-10 w-10 items-center justify-center rounded-full border transition-all"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -104,14 +104,14 @@ export default function RightPanel({ incident, loading, error, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex-shrink-0 flex border-b border-white/5 bg-zinc-950/20 px-8">
+        <div className="theme-panel-soft theme-border-subtle flex flex-shrink-0 border-b px-8">
           {incident && (
             <button
               onClick={() => setActiveTab("analysis")}
               className={`py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2 mr-6 ${
                 activeTab === "analysis"
                   ? "border-rose-500 text-rose-500"
-                  : "border-transparent text-zinc-500 hover:text-zinc-300"
+                  : "theme-tab-inactive border-transparent"
               }`}
             >
               Analysis
@@ -122,7 +122,7 @@ export default function RightPanel({ incident, loading, error, onClose }) {
             className={`py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2 ${
               activeTab === "chat"
                 ? "border-indigo-500 text-indigo-500"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                : "theme-tab-inactive border-transparent"
             }`}
           >
             Interactive Chat
@@ -137,7 +137,7 @@ export default function RightPanel({ incident, loading, error, onClose }) {
             <div className="flex-1 overflow-y-auto p-8 space-y-8 min-h-0">
               {incident?.triggerLog && (
                 <div className="space-y-3">
-                  <span className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase">
+                  <span className="theme-text-muted text-[10px] font-bold tracking-widest uppercase">
                     Trigger Event
                   </span>
                   <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
@@ -158,46 +158,46 @@ export default function RightPanel({ incident, loading, error, onClose }) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="glass-card p-4 rounded-xl">
-                  <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">
+                  <p className="theme-text-muted mb-1 text-[9px] font-bold uppercase tracking-widest">
                     Status
                   </p>
-                  <p className="text-xs font-bold text-white uppercase">
+                  <p className="theme-text-primary text-xs font-bold uppercase">
                     {incident?.status || (loading ? "processing" : "idle")}
                   </p>
                 </div>
                 <div className="glass-card p-4 rounded-xl">
-                  <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest mb-1">
+                  <p className="theme-text-muted mb-1 text-[9px] font-bold uppercase tracking-widest">
                     Context
                   </p>
-                  <p className="text-xs font-bold text-white uppercase">
+                  <p className="theme-text-primary text-xs font-bold uppercase">
                     {incident?.logCount ?? 0} Events
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <span className="text-[10px] font-bold text-zinc-500 tracking-widest uppercase italic">
+                <span className="theme-text-muted text-[10px] font-bold tracking-widest uppercase italic">
                   Neural Analysis
                 </span>
                 <div className="relative">
                   <div className="absolute -left-4 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-transparent to-transparent"></div>
-                  <div className="rounded-xl border border-white/5 bg-zinc-900/30 p-6">
+                  <div className="theme-panel rounded-xl p-6">
                     {loading && (
                       <div className="flex flex-col gap-3">
-                        <div className="h-3 w-full animate-pulse rounded bg-white/5"></div>
-                        <div className="h-3 w-3/4 animate-pulse rounded bg-white/5"></div>
-                        <div className="h-3 w-5/6 animate-pulse rounded bg-white/5"></div>
+                        <div className="theme-skeleton h-3 w-full animate-pulse rounded"></div>
+                        <div className="theme-skeleton h-3 w-3/4 animate-pulse rounded"></div>
+                        <div className="theme-skeleton h-3 w-5/6 animate-pulse rounded"></div>
                       </div>
                     )}
                     {!loading && error && <p className="text-sm text-rose-400">{error}</p>}
                     {!loading && !error && incident?.status === "pending" && (
-                      <p className="text-sm leading-relaxed text-zinc-400">
+                      <p className="theme-text-secondary text-sm leading-relaxed">
                         Acquiring telemetry samples... Synchronizing incident window logs (T-5s to
                         T+5s).
                       </p>
                     )}
                     {!loading && !error && incident?.status === "completed" && (
-                      <p className="text-sm leading-relaxed text-zinc-300 whitespace-pre-wrap mono">
+                      <p className="theme-text-secondary mono whitespace-pre-wrap text-sm leading-relaxed">
                         {incident.analysis}
                       </p>
                     )}

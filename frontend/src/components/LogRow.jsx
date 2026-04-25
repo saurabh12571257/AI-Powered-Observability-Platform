@@ -11,12 +11,12 @@ export default function LogRow({ log }) {
   const severityStyles =
     log.severity === "high"
       ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 border-transparent"
-      : "bg-zinc-800 text-zinc-400 border-zinc-700";
+      : "theme-severity-neutral";
 
   return (
-    <div className="group flex items-center gap-6 rounded-xl border border-transparent px-5 py-3 transition-all hover:border-white/5 hover:bg-zinc-900/30">
+    <div className="theme-log-row group flex items-center gap-6 rounded-xl border border-transparent px-5 py-3 transition-all">
       <div className="flex w-20 flex-col">
-        <span className="text-[10px] font-medium tabular-nums text-zinc-600">
+        <span className="theme-text-muted text-[10px] font-medium tabular-nums">
           {log.createdAt
             ? new Date(log.createdAt).toLocaleTimeString([], { hour12: false })
             : "00:00:00"}
@@ -40,13 +40,13 @@ export default function LogRow({ log }) {
       </div>
 
       <div className="flex w-32 items-center">
-        <span className="text-[10px] font-black tracking-wider text-indigo-400/80 uppercase">
+        <span className="text-[10px] font-black tracking-wider text-indigo-500 uppercase">
           {log.service}
         </span>
       </div>
 
       <div className="flex-1">
-        <code className="block flex-1 font-mono text-xs leading-relaxed text-zinc-300 transition-colors group-hover:text-white">
+        <code className="theme-log-message block flex-1 font-mono text-xs leading-relaxed">
           {log.message}
         </code>
       </div>
