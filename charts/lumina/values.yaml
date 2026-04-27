@@ -3,13 +3,12 @@
 secrets:
   openaiApiKey: ""
   mongoUri: ""
-
 backend:
   replicaCount: 1
   image:
     repository: saurabhdave59/observability-backend
     pullPolicy: Always
-    tag: "bd504f0c03904c84ddd12ee4cffa1519f1cd9423"
+    tag: "dd9a8e2a769c16f790027a028d97f99628f37ca8"
   service:
     type: NodePort
     port: 8000
@@ -21,7 +20,7 @@ frontend:
   image:
     repository: saurabhdave59/observability-frontend
     pullPolicy: Always
-    tag: "bd504f0c03904c84ddd12ee4cffa1519f1cd9423"
+    tag: "dd9a8e2a769c16f790027a028d97f99628f37ca8"
   service:
     type: ClusterIP
     port: 80
