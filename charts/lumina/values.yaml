@@ -1,5 +1,9 @@
 # Default values for lumina chart.
 
+secrets:
+  openaiApiKey: ""
+  mongoUri: ""
+
 backend:
   replicaCount: 1
   image:

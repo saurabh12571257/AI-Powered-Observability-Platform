@@ -1,6 +1,7 @@
 node_modules
 .env
 backend/node_modules
+values.local.yaml
 
 # Terraform
 # Local .terraform directories
