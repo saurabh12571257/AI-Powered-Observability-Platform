@@ -268,18 +268,32 @@ For the integrated UI, use ingress rather than direct NodePort access whenever p
 
 The repository includes a Helm chart in `charts/lumina/`.
 
-Create the secret expected by the chart:
+The chart now creates `lumina-secrets` for you from Helm values, so you do not need to run `kubectl create secret` on every install.
+
+Create a local values file in the repository root:
+
+```yaml
+secrets:
+  openaiApiKey: "your-openai-api-key"
+  mongoUri: "your-mongodb-connection-string"
+```
+
+Save it as `values.local.yaml`.
+
+Important notes:
+
+- `values.local.yaml` is gitignored and intended for local secrets only
+- Do not commit real keys into `charts/lumina/values.yaml`
+- If you previously created `lumina-secrets` manually, delete it once so Helm can take ownership:
 
 ```bash
-kubectl create secret generic lumina-secrets \
-  --from-literal=OPENAI_API_KEY="your-openai-api-key" \
-  --from-literal=MONGO_URI="your-mongodb-connection-string"
+kubectl delete secret lumina-secrets
 ```
 
 Install or upgrade the release:
 
 ```bash
-helm upgrade --install lumina ./charts/lumina
+helm upgrade --install lumina ./charts/lumina -f values.local.yaml
 ```
 
 What the chart manages:
@@ -294,6 +308,7 @@ Chart notes:
 
 - The backend service is exposed as NodePort by default
 - The frontend and Kibana are designed to be accessed through ingress
+- The Helm chart creates `lumina-secrets` from `values.local.yaml`
 - MongoDB is still external to this chart
 
 ### Option 3: Docker Compose
@@ -368,13 +383,14 @@ If you mainly want to test ingestion and backend behavior, use the API examples 
 
 Choose a base URL first:
 
+- Helm with ingress: `http://localhost`
 - Raw Kubernetes backend NodePort: `http://localhost:30007`
 - Docker Compose backend: `http://localhost:8001`
 
 Example:
 
 ```bash
-BASE_URL=http://localhost:30007
+BASE_URL=http://localhost
 ```
 
 ### Send a high-severity log
@@ -434,6 +450,7 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 | `docker-compose.yaml`    | Starts backend, Elasticsearch, and Kibana                                                        |
 | `k8s/`                   | Raw Kubernetes manifests for the application stack                                               |
 | `charts/lumina/`         | Helm chart for the stack                                                                         |
+| `values.local.yaml`      | Local Helm values file for secrets such as `OPENAI_API_KEY` and `MONGO_URI`                     |
 | `frontend/nginx.conf`    | NGINX config for serving the React build and defining same-origin API and Socket.IO proxy routes |
 | `backend/test-socket.js` | Small client for testing real-time events                                                        |
 | `curl commands`          | Example ingestion requests                                                                       |
@@ -446,6 +463,7 @@ The current readiness endpoint does not verify Elasticsearch or OpenAI availabil
 - Incident analysis is asynchronous and intentionally delayed by 5 seconds to collect post-trigger context.
 - The AI chat endpoint pulls the latest logs through the shared log service, so it can fall back to MongoDB-backed retrieval if Elasticsearch queries fail.
 - The repository does not currently provision MongoDB in Docker Compose, raw manifests, or the Helm chart.
+- Helm-based local setup expects secrets to come from `values.local.yaml`, which is intentionally ignored by git.
 - Local browser development is not fully plug-and-play yet because the frontend expects same-origin proxying for `/api` and `/socket.io`.
 
 ## Summary
