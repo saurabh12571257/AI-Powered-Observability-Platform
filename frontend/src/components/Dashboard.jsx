@@ -33,7 +33,7 @@ export default function Dashboard({
   onCloseAlert,
 }) {
   return (
-    <div className="theme-shell flex min-h-screen">
+    <div className="theme-shell flex h-screen overflow-hidden">
       <Sidebar theme={theme} onToggleTheme={onToggleTheme} />
 
       <main className="relative flex flex-1 flex-col overflow-hidden">
