@@ -47,7 +47,6 @@ flowchart LR
 9. If a later log for the same service is `severity=low` or `level=info`, the latest active incident for that service is marked `resolved`.
 
 ## Key Features
-
 - Real-time log ingestion through REST endpoints
 - Dual-write log pipeline to MongoDB and Elasticsearch
 - Live dashboard updates through Socket.IO
