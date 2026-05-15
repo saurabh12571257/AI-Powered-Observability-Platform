@@ -1,6 +1,7 @@
 const logService = require("../services/logService");
 const aiService = require("../services/aiService");
 const incidentService = require("../services/incidentService");
+const { sendTraceError } = require("../telemetry");
 
 const analyzeLogs = async (req, res) => {
   try {
@@ -8,13 +9,13 @@ const analyzeLogs = async (req, res) => {
     const insight = await aiService.analyzeLogs(logs);
     res.json({ insight });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return sendTraceError(req, res, err);
   }
 };
 
 const createLog = async (req, res) => {
   try {
-    const log = await logService.createLog(req.body);
+    const log = await logService.createLog(req.body, { traceContext: req.traceContext });
 
     const io = req.app.get("io");
     io.emit("new-log", log);
@@ -29,7 +30,7 @@ const createLog = async (req, res) => {
 
     res.status(201).json({ log, incident });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return sendTraceError(req, res, error);
   }
 };
 
@@ -38,7 +39,7 @@ const getLogs = async (req, res) => {
     const result = await logService.getLogs(req.query);
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return sendTraceError(req, res, error);
   }
 };
 
@@ -47,7 +48,7 @@ const getStats = async (req, res) => {
     const stats = await logService.getLogStats();
     res.json(stats);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return sendTraceError(req, res, err);
   }
 };
 
@@ -56,7 +57,7 @@ const getIncidents = async (req, res) => {
     const incidents = await incidentService.getIncidents(req.query);
     res.json({ incidents });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return sendTraceError(req, res, error);
   }
 };
 
@@ -68,7 +69,7 @@ const chatWithAI = async (req, res) => {
     const reply = await aiService.chatWithLogs(messages, logs);
     res.json({ reply });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return sendTraceError(req, res, error);
   }
 };
 

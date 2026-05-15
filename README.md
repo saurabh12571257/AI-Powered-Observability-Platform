@@ -15,11 +15,13 @@ What Lumina does:
 - Accepts structured log events over HTTP
 - Stores every log in MongoDB
 - Indexes logs into Elasticsearch for search and aggregations
+- Correlates logs with OpenTelemetry trace and span IDs
 - Broadcasts new events to the dashboard in real time over Socket.IO
 - Creates incident records automatically for `high` severity logs
 - Runs AI analysis over a 10-second incident window around the trigger event
 - Offers an interactive AI chat that answers questions using recent log context
 - Exposes Kibana alongside the app for deeper exploration
+- Exports backend traces to Jaeger or another OTLP-compatible tracing backend
 
 ## Architecture
 
@@ -28,10 +30,12 @@ flowchart LR
     A["Application services"] -->|"POST /api/logs"| B["Express API + Socket.IO"]
     B --> C[("MongoDB")]
     B --> D[("Elasticsearch")]
+    B --> I["OpenTelemetry spans"]
     B --> E["Incident scheduler"]
     E --> F["OpenAI"]
     B -->|"new-log / incident-updated"| G["React dashboard"]
     D --> H["Kibana"]
+    I --> J["Jaeger / OTLP backend"]
 ```
 
 ## Request and Incident Flow
@@ -122,7 +126,9 @@ Expected payload:
   "service": "payment-gateway",
   "level": "error",
   "severity": "high",
-  "message": "Database connection pool exhausted"
+  "message": "Database connection pool exhausted",
+  "traceId": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "spanId": "00f067aa0ba902b7"
 }
 ```
 
@@ -131,6 +137,7 @@ Behavior:
 - `service` and `message` are trimmed
 - `level` is normalized to lowercase and defaults to `info`
 - `severity` is normalized to lowercase and defaults to `medium`
+- `traceId`, `spanId`, and `traceparent` are stored when provided, or inferred from the active request span
 - The response includes both the created `log` and the `incident` summary if one was created
 
 ### `GET /api/logs`
@@ -142,6 +149,8 @@ Supported query parameters:
 - `level`
 - `service`
 - `severity`
+- `traceId`
+- `spanId`
 - `search`
 
 Response shape:
@@ -189,7 +198,7 @@ The assistant is intentionally restricted to log analysis and troubleshooting ta
 The dashboard in `frontend/` provides:
 
 - A live log stream updated via Socket.IO
-- Search across message, service, level, and severity
+- Search across message, service, level, severity, and trace ID
 - Dynamic filters for level, service, and severity with a resettable filtered view count
 - Top-line metrics for total logs, error rate, high-severity alerts, and AI diagnostic state
 - An incident drawer that shows trigger log, status, context count, and AI analysis
@@ -199,11 +208,28 @@ The dashboard in `frontend/` provides:
 
 The backend reads the following environment variables:
 
-| Variable         | Required                 | Default | Notes                                           |
-| ---------------- | ------------------------ | ------- | ----------------------------------------------- |
-| `PORT`           | No                       | `8000`  | Backend HTTP port                               |
-| `MONGO_URI`      | Yes                      | None    | Required for startup; also used by `/ready`     |
-| `OPENAI_API_KEY` | Required for AI features | None    | Needed for incident analysis and chat endpoints |
+| Variable                             | Required                 | Default           | Notes                                                        |
+| ------------------------------------ | ------------------------ | ----------------- | ------------------------------------------------------------ |
+| `PORT`                               | No                       | `8000`            | Backend HTTP port                                            |
+| `MONGO_URI`                          | Yes                      | None              | Required for startup; also used by `/ready`                  |
+| `OPENAI_API_KEY`                     | Required for AI features | None              | Needed for incident analysis and chat endpoints              |
+| `OTEL_SERVICE_NAME`                  | No                       | `lumina-backend`  | Logical service name attached to spans                       |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`        | No                       | None              | Base OTLP endpoint such as `http://localhost:4318`           |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` | No                       | None              | Trace-only OTLP endpoint such as `http://localhost:4318/v1/traces` |
+| `OTEL_LOG_LEVEL`                     | No                       | `info`            | Set to `debug` for verbose OpenTelemetry diagnostics         |
+
+## OpenTelemetry Tracing
+
+The backend now loads OpenTelemetry before Express, MongoDB, and Socket.IO, so request spans can be created consistently. Lumina still stores logs in MongoDB and Elasticsearch, but each record can now be correlated with `traceId`, `spanId`, and `traceparent`.
+
+What this gives you:
+
+- Request traces for log ingestion, searches, incident creation, and AI analysis
+- `traceId` included on backend error responses for faster debugging
+- Trace IDs stored in MongoDB and Elasticsearch, and visible in the dashboard
+- Direct OTLP export support for Jaeger or another tracing backend
+
+If an upstream service sends a W3C `traceparent` header, Lumina continues that distributed trace and persists the correlated trace metadata alongside the log.
 
 ### Important code-level assumptions
 
@@ -314,12 +340,14 @@ Chart notes:
 
 The Compose file is useful for backend-oriented development and quick infrastructure spin-up.
 
-Before starting, create `backend/.env`:
+Before starting, copy `backend/.env.example` to `backend/.env` and fill in the real values:
 
 ```env
 PORT=8000
 MONGO_URI=your-mongodb-connection-string
 OPENAI_API_KEY=your-openai-api-key
+OTEL_SERVICE_NAME=lumina-backend
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
 ```
 
 Start the stack:
@@ -333,12 +361,15 @@ This launches:
 - `backend`
 - `elasticsearch`
 - `kibana`
+- `jaeger`
 
 Exposed ports:
 
 - Backend: `http://localhost:8001`
 - Elasticsearch: `http://localhost:9200`
 - Kibana: `http://localhost:5601`
+- Jaeger UI: `http://localhost:16686`
+- OTLP HTTP ingest: `http://localhost:4318`
 
 Compose caveats:
 
@@ -362,6 +393,8 @@ For this to work cleanly, you need:
 - Elasticsearch reachable at `http://elasticsearch:9200`
 
 If Elasticsearch is running somewhere else locally, you will need to update `backend/src/config/elasticsearch.js` or provide a local hostname alias named `elasticsearch`.
+
+To see traces locally during `npm run dev`, either set `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318` with Jaeger running, or leave the OTLP endpoint unset and inspect spans in the backend console.
 
 #### Frontend
 

@@ -6,7 +6,7 @@ export const SEVERITY_PRIORITY = {
   low: 2,
 };
 
-const SEARCH_FIELDS = ["message", "service", "level", "severity"];
+const SEARCH_FIELDS = ["message", "service", "level", "severity", "traceId", "spanId"];
 
 const normalizeValue = (value) => {
   if (typeof value !== "string") {

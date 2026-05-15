@@ -12,6 +12,10 @@ export default function LogRow({ log }) {
     log.severity === "high"
       ? "bg-rose-500 text-white shadow-lg shadow-rose-500/20 border-transparent"
       : "theme-severity-neutral";
+  const compactTraceId =
+    typeof log.traceId === "string" && log.traceId.length > 14
+      ? `${log.traceId.slice(0, 8)}...${log.traceId.slice(-6)}`
+      : log.traceId;
 
   return (
     <div className="theme-log-row group flex items-center gap-6 rounded-xl border border-transparent px-5 py-3 transition-all">
@@ -49,6 +53,17 @@ export default function LogRow({ log }) {
         <code className="theme-log-message block flex-1 font-mono text-xs leading-relaxed">
           {log.message}
         </code>
+        {log.traceId && (
+          <div className="mt-2 flex items-center gap-2 text-[10px]">
+            <span className="theme-text-muted font-semibold uppercase tracking-[0.22em]">Trace</span>
+            <code
+              className="theme-text-muted rounded-md border border-white/10 px-2 py-0.5 font-mono"
+              title={log.traceId}
+            >
+              {compactTraceId}
+            </code>
+          </div>
+        )}
       </div>
     </div>
   );
