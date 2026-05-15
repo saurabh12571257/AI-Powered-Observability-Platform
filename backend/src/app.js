@@ -3,12 +3,18 @@ const cors = require("cors");
 
 const { getDBHealth } = require("./config/db");
 const { metricsRegister, metricsContentType } = require("./metrics");
+const { attachTraceContextToRequest } = require("./telemetry");
 const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["x-trace-id", "x-span-id", "traceparent"],
+  })
+);
 app.use(express.json());
+app.use(attachTraceContextToRequest);
 
 app.use("/api", logRoutes);
 
