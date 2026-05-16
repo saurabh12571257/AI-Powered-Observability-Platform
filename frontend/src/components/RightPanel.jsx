@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AIChat from "./AIChat";
+import MarkdownContent from "./MarkdownContent";
 
 export default function RightPanel({ incident, loading, error, onClose }) {
   const [activeTab, setActiveTab] = useState("analysis");
@@ -197,9 +198,10 @@ export default function RightPanel({ incident, loading, error, onClose }) {
                       </p>
                     )}
                     {!loading && !error && incident?.status === "completed" && (
-                      <p className="theme-text-secondary mono whitespace-pre-wrap text-sm leading-relaxed">
-                        {incident.analysis}
-                      </p>
+                      <MarkdownContent
+                        content={incident.analysis}
+                        className="theme-text-secondary mono text-sm leading-relaxed"
+                      />
                     )}
                   </div>
                 </div>

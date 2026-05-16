@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import MarkdownContent from "./MarkdownContent";
 
 export default function AIChat() {
   const [messages, setMessages] = useState([
@@ -58,7 +59,11 @@ export default function AIChat() {
                   : "theme-chat-bubble rounded-tl-none"
               }`}
             >
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <MarkdownContent content={msg.content} className="theme-text-secondary" />
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
